@@ -35,31 +35,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = void 0;
-var jsonwebtoken_1 = require("jsonwebtoken");
-var process_1 = __importDefault(require("process"));
-var verifyToken = function (token) { return __awaiter(void 0, void 0, void 0, function () {
-    var authToken, decoded, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 3, , 4]);
-                if (!token) return [3 /*break*/, 2];
-                authToken = token.replace("Bearer ", "");
-                return [4 /*yield*/, (0, jsonwebtoken_1.verify)(authToken, process_1.default.env.JWT_SECRET_TOKEN)];
-            case 1:
-                decoded = _a.sent();
-                return [2 /*return*/, decoded];
-            case 2: return [3 /*break*/, 4];
-            case 3:
-                error_1 = _a.sent();
-                return [2 /*return*/, null];
-            case 4: return [2 /*return*/];
+exports.addEmployeeTypeController = exports.employeeCreateController = void 0;
+var HttpResponse_1 = require("../classes/HttpResponse");
+var Messages_1 = require("../constants/Messages");
+var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
+var employeeService_1 = require("../services/employeeService");
+var employeeCreateController = function (req, res) {
+    var params = {
+        fullName: req.body.fullName,
+        mobileNumber: req.body.mobileNumber,
+        orgName: "moonair",
+        password: req.body.password,
+        employeeType: req.body.employeeType,
+    };
+    (0, employeeService_1.employeeCreateService)(params, function (result) {
+        if (result === true) {
+            return new HttpResponse_1.HttpResponse(res, Messages_1.Messages.EMPLOYEE_CREATE, result, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
         }
+        new HttpResponse_1.HttpResponse(res).sendErrorResponse(result);
+    });
+};
+exports.employeeCreateController = employeeCreateController;
+var addEmployeeTypeController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var params;
+    return __generator(this, function (_a) {
+        try {
+            params = {
+                type: req.body.type,
+            };
+            (0, employeeService_1.addEmployeeTypeService)(params, function (result) {
+                if (result === true) {
+                    return new HttpResponse_1.HttpResponse(res, Messages_1.Messages.EMPLOYEE_TYPE_CREATED, result, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+                }
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(result);
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
     });
 }); };
-exports.verifyToken = verifyToken;
+exports.addEmployeeTypeController = addEmployeeTypeController;

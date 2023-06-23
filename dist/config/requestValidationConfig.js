@@ -35,4 +35,18 @@ exports.requestValidationConfig = {
             max: 10,
         }),
     ],
+    employeeCreate: [
+        (0, express_validator_1.body)("fullName", "Enter a valid full name").isLength({
+            min: 3,
+        }),
+        (0, express_validator_1.body)("password", "Password should be minimum 6 characters.").isLength({
+            min: 6,
+        }),
+        (0, express_validator_1.body)("mobileNumber", "Enter a valid mobile number").isLength({
+            min: 10,
+            max: 10,
+        }),
+        (0, express_validator_1.body)("employeeType", "Select a valid employee type").exists(),
+    ],
+    employeeType: [(0, express_validator_1.body)("type", "Enter a valid full name").exists()],
 };

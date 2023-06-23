@@ -1,33 +1,31 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
 
-export interface employeesModel {
-  companyId: string;
+export interface EmployeesModel {
   fullName: string;
   orgName: string;
   mobileNumber: number;
-  emailId: string;
   password: string;
-  employeeStatus: string;
-  userType: string;
+  employeeType: Schema.Types.ObjectId;
   createdAt?: Date;
   updateAt?: Date;
 }
 
-const schema = new Schema<employeesModel>({
-  companyId: { type: String, required: true },
+const schema = new Schema<EmployeesModel>({
   fullName: { type: String, required: false },
   orgName: { type: String, required: true },
   mobileNumber: { type: Number, require: false },
-  emailId: { type: String, required: true },
   password: { type: String, required: false },
-  employeeStatus: { type: String, required: true },
-  userType: { type: String, required: true },
+  employeeType: {
+    type: [Schema.Types.ObjectId],
+    ref: IDatabaseSchema.EMPLOYEE_TYPE,
+    required: true,
+  },
   createdAt: { type: Date, default: Date.now },
   updateAt: { type: Date, default: Date.now },
 });
 
-export const EmployeesSchema = model<employeesModel>(
-  IDatabaseSchema.ADMINDATA,
+export const EmployeesSchema = model<EmployeesModel>(
+  IDatabaseSchema.EMPLOYEE,
   schema
 );

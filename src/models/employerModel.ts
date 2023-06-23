@@ -6,7 +6,7 @@ export interface employerModel {
   orgName: string;
   mobileNumber: number;
   password: string;
-  userType: string;
+  employeeType: string;
   createdAt?: Date;
   updateAt?: Date;
 }
@@ -16,7 +16,7 @@ const schema = new Schema<employerModel>({
   orgName: { type: String, required: true },
   mobileNumber: { type: Number, require: true },
   password: { type: String, required: true },
-  userType: { type: String, required: true },
+  employeeType: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updateAt: { type: Date, default: Date.now },
 });

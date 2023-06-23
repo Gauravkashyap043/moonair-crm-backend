@@ -8,7 +8,7 @@ var schema = new mongoose_1.Schema({
     orgName: { type: String, required: true },
     mobileNumber: { type: Number, require: true },
     password: { type: String, required: true },
-    userType: { type: String, required: true },
+    employeeType: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     updateAt: { type: Date, default: Date.now },
 });

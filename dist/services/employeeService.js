@@ -35,31 +35,64 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = void 0;
-var jsonwebtoken_1 = require("jsonwebtoken");
-var process_1 = __importDefault(require("process"));
-var verifyToken = function (token) { return __awaiter(void 0, void 0, void 0, function () {
-    var authToken, decoded, error_1;
+exports.addEmployeeTypeService = exports.employeeCreateService = void 0;
+var Helper_1 = require("../classes/Helper");
+var Messages_1 = require("../constants/Messages");
+var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
+var employeeModel_1 = require("../models/employeeModel");
+var employeeTypeModel_1 = require("../models/employeeTypeModel");
+var employeeCreateService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
-                if (!token) return [3 /*break*/, 2];
-                authToken = token.replace("Bearer ", "");
-                return [4 /*yield*/, (0, jsonwebtoken_1.verify)(authToken, process_1.default.env.JWT_SECRET_TOKEN)];
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({
+                        mobileNumber: params.mobileNumber,
+                    })];
             case 1:
-                decoded = _a.sent();
-                return [2 /*return*/, decoded];
-            case 2: return [3 /*break*/, 4];
+                result = _a.sent();
+                if (result && result.length) {
+                    return [2 /*return*/, Helper_1.Helper.throwError(Messages_1.Messages.EMPLOYEE_EXIST, true, IHttpStatuses_1.HttpStatuses.CONFLICT)];
+                }
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.create(params)];
+            case 2:
+                _a.sent();
+                callBack(true);
+                return [3 /*break*/, 4];
             case 3:
                 error_1 = _a.sent();
-                return [2 /*return*/, null];
+                callBack(error_1);
+                return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.verifyToken = verifyToken;
+exports.employeeCreateService = employeeCreateService;
+var addEmployeeTypeService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.find(params)];
+            case 1:
+                result = _a.sent();
+                if (result && result.length) {
+                    return [2 /*return*/, Helper_1.Helper.throwError(Messages_1.Messages.EMPLOYEE_EXIST, true, IHttpStatuses_1.HttpStatuses.CONFLICT)];
+                }
+                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.create(params)];
+            case 2:
+                _a.sent();
+                callBack(true);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                callBack(error_2);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.addEmployeeTypeService = addEmployeeTypeService;

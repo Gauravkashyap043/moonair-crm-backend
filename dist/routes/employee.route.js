@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var employeeController_1 = require("../controllers/employeeController");
+var RequestValidation_1 = require("../classes/RequestValidation");
+var requestValidationConfig_1 = require("../config/requestValidationConfig");
+var employeeRouter = (0, express_1.Router)();
+employeeRouter.post("/create", RequestValidation_1.RequestValidation.validateFunction(requestValidationConfig_1.requestValidationConfig.employeeCreate), employeeController_1.employeeCreateController);
+employeeRouter.post("/add-employee-type", RequestValidation_1.RequestValidation.validateFunction(requestValidationConfig_1.requestValidationConfig.employeeType), employeeController_1.addEmployeeTypeController);
+exports.default = employeeRouter;

@@ -33,4 +33,20 @@ export const requestValidationConfig = {
       max: 10,
     }),
   ],
+
+  employeeCreate: [
+    body("fullName", "Enter a valid full name").isLength({
+      min: 3,
+    }),
+    body("password", "Password should be minimum 6 characters.").isLength({
+      min: 6,
+    }),
+    body("mobileNumber", "Enter a valid mobile number").isLength({
+      min: 10,
+      max: 10,
+    }),
+    body("employeeType", "Select a valid employee type").exists(),
+  ],
+
+  employeeType: [body("type", "Enter a valid full name").exists()],
 };

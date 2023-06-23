@@ -1,4 +1,6 @@
 export enum IDatabaseSchema {
   COMPLAINFORM = "complainForm",
-  ADMINDATA="adminData"
+  ADMINDATA = "adminData",
+  EMPLOYEE = "employees",
+  EMPLOYEE_TYPE = "employeeType",
 }

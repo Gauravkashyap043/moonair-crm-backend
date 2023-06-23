@@ -5,4 +5,6 @@ var IDatabaseSchema;
 (function (IDatabaseSchema) {
     IDatabaseSchema["COMPLAINFORM"] = "complainForm";
     IDatabaseSchema["ADMINDATA"] = "adminData";
+    IDatabaseSchema["EMPLOYEE"] = "employees";
+    IDatabaseSchema["EMPLOYEE_TYPE"] = "employeeType";
 })(IDatabaseSchema || (exports.IDatabaseSchema = IDatabaseSchema = {}));

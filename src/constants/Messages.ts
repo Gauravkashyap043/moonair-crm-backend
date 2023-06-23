@@ -1,0 +1,14 @@
+export const Messages = {
+  EMPLOYER_EXIST: "Account already exist.",
+  COMPANY_EXIST: "Company already exist.",
+  MOBILE_NOT_EXIST: "Mobile number doesn't exist.",
+  MOBILE_EXIST: "Mobile number already registered.",
+  WRONG_PASSWORD: "Wrong password.",
+  EMPLOYEE_EXIST: "Employee already exist.",
+  EMPLOYEE_AUTHENTICATED: "Authentication successful.",
+  EMPLOYEE_EMAIL_NOT_FOUND: "Email not found.",
+  ERROR_WHILE_CREATE_EMPLOYEE: "Error while creating employee.",
+  INVALID_TOKEN: "Invalid token.",
+  USER_UNAUTHORIZED: "User unauthorized.",
+  INTERNAL_SERVER_ERROR: "Internal Server Error. Kindly contact admin.",
+};

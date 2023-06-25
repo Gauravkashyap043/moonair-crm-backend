@@ -35,10 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.ComplainFormRegisterService = void 0;
+exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
 var formModels_1 = require("../models/formModels");
 var employeeTypeModel_1 = require("../models/employeeTypeModel");
+var mongoose_1 = __importDefault(require("mongoose"));
 var ComplainFormRegisterService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
     var employeeTpye, error_1;
     return __generator(this, function (_a) {
@@ -66,8 +70,35 @@ var ComplainFormRegisterService = function (params, callBack) { return __awaiter
     });
 }); };
 exports.ComplainFormRegisterService = ComplainFormRegisterService;
+var GetSingleComplainDataService = function (complainId, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var isValidObjectId, complaint, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                isValidObjectId = mongoose_1.default.Types.ObjectId.isValid(complainId);
+                if (!isValidObjectId) {
+                    throw new Error('Invalid complaint ID');
+                }
+                return [4 /*yield*/, formModels_1.complainFormSchema.findById({ complainId: complainId })];
+            case 1:
+                complaint = _a.sent();
+                if (!complaint) {
+                    throw new Error('Complaint not found');
+                }
+                callBack(complaint);
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                callBack(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.GetSingleComplainDataService = GetSingleComplainDataService;
 var GetComplainDataService = function (search, page, limit, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, totalCount, totalPages, complaints, error_2;
+    var query, totalCount, totalPages, complaints, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -89,8 +120,8 @@ var GetComplainDataService = function (search, page, limit, callBack) { return _
                 callBack(complaints, totalCount, page, totalPages);
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _a.sent();
-                callBack(error_2);
+                error_3 = _a.sent();
+                callBack(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -98,7 +129,7 @@ var GetComplainDataService = function (search, page, limit, callBack) { return _
 }); };
 exports.GetComplainDataService = GetComplainDataService;
 var ComplainFormUpdateService = function (complainId, updatedParams, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var error_3;
+    var error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -109,8 +140,8 @@ var ComplainFormUpdateService = function (complainId, updatedParams, callBack) {
                 callBack(true);
                 return [3 /*break*/, 3];
             case 2:
-                error_3 = _a.sent();
-                callBack(error_3);
+                error_4 = _a.sent();
+                callBack(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -118,7 +149,7 @@ var ComplainFormUpdateService = function (complainId, updatedParams, callBack) {
 }); };
 exports.ComplainFormUpdateService = ComplainFormUpdateService;
 var ComplainFormDeleteService = function (complainId, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var error_4;
+    var error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -129,8 +160,8 @@ var ComplainFormDeleteService = function (complainId, callBack) { return __await
                 callBack(true);
                 return [3 /*break*/, 3];
             case 2:
-                error_4 = _a.sent();
-                callBack(error_4);
+                error_5 = _a.sent();
+                callBack(error_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

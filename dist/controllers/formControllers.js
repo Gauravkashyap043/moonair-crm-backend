@@ -36,27 +36,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
+exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var jwtConfig_1 = require("../config/jwtConfig");
 var formService_1 = require("../services/formService");
-var notificationSender_1 = require("../assets/notificationSender");
 var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token_1, params_1, error_1;
+    var token, params_1, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
             case 1:
-                token_1 = _a.sent();
-                console.log("----------token-------------", token_1['0'].employeeType[0]);
-                if (token_1) {
+                token = _a.sent();
+                if (token) {
+                    console.log("----------token-------------", token['0']);
                     params_1 = {
                         complainId: req.body.complainId,
                         dealerName: req.body.dealerName,
-                        registerBy: token_1['0'].fullName,
+                        registerBy: token['0'].fullName,
                         phoneNumber: req.body.phoneNumber,
                         customerName: req.body.customerName,
                         address: req.body.address,
@@ -66,13 +65,14 @@ var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0
                         postalCode: req.body.postalCode,
                         dopDate: new Date,
                         problem: req.body.problem,
-                        registerById: token_1['0'].employeeType[0],
+                        registerById: token['0'].employeeType[0],
                         complainStatus: "PENDING"
                     };
+                    console.log("========params==============", params_1);
                     (0, formService_1.ComplainFormRegisterService)(params_1, function (result) {
                         if (result === true) {
-                            var smsNotification = "".concat(params_1.customerName, " Your complaint has been registered successfully by ").concat(token_1['0'].fullName, ". Complaint ID: ").concat(params_1.complainId);
-                            (0, notificationSender_1.sendSMS)(params_1.phoneNumber, smsNotification);
+                            // const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
+                            // sendSMS(params.phoneNumber, smsNotification);
                             return new HttpResponse_1.HttpResponse(res, result ? "complain register successfully" : "Failed", params_1, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
                         }
                         new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
@@ -114,6 +114,24 @@ var GetComplainFromData = function (req, res) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.GetComplainFromData = GetComplainFromData;
+var GetSingleComplainData = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var complainId;
+    return __generator(this, function (_a) {
+        try {
+            complainId = req.params.id;
+            (0, formService_1.GetSingleComplainDataService)(complainId, function (complaint) {
+                return new HttpResponse_1.HttpResponse(res, "Get single complaint successfully", {
+                    complaint: complaint,
+                }, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.GetSingleComplainData = GetSingleComplainData;
 var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var token, complainId, updatedParams_1, error_2;
     return __generator(this, function (_a) {

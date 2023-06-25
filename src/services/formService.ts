@@ -3,6 +3,7 @@ import { Messages } from "../constants/Messages";
 import { Complaint, complainFormSchema } from "../models/formModels";
 import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { EmployeeTypeSchema } from "../models/employeeTypeModel";
+import mongoose from "mongoose";
 
 export const ComplainFormRegisterService = async (
   params: Complaint,
@@ -15,6 +16,26 @@ export const ComplainFormRegisterService = async (
       callBack(true);
     }
     callBack(false)
+  } catch (error) {
+    callBack(error);
+  }
+};
+
+export const GetSingleComplainDataService = async (complainId: string, callBack: Function) => {
+  try {
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(complainId);
+
+    if (!isValidObjectId) {
+      throw new Error('Invalid complaint ID');
+    }
+
+    const complaint = await complainFormSchema.findById({complainId});
+
+    if (!complaint) {
+      throw new Error('Complaint not found');
+    }
+
+    callBack(complaint);
   } catch (error) {
     callBack(error);
   }

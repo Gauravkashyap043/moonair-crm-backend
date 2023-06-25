@@ -4,15 +4,15 @@ import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { Helper } from "../classes/Helper";
 import { verifyToken } from "../config/jwtConfig";
 import { Messages } from "../constants/Messages";
-import { ComplainFormDeleteService, ComplainFormRegisterService, ComplainFormUpdateService, GetComplainDataService } from "../services/formService";
+import { ComplainFormDeleteService, ComplainFormRegisterService, ComplainFormUpdateService, GetComplainDataService, GetSingleComplainDataService } from "../services/formService";
 import { Complaint } from "../models/formModels";
 import { sendSMS } from '../assets/notificationSender'
 
 export const ComplainFormRegister = async (req: Request, res: Response) => {
   try {
     const token = await verifyToken(req.headers.authorization);
-    console.log("----------token-------------", token['0'].employeeType[0])
     if (token) {
+      console.log("----------token-------------", token['0'])
 
       const params: Complaint = {
 
@@ -33,10 +33,12 @@ export const ComplainFormRegister = async (req: Request, res: Response) => {
 
       };
 
+
+      console.log("========params==============",params)
       ComplainFormRegisterService(params, (result: boolean) => {
         if (result === true) {
-          const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
-          sendSMS(params.phoneNumber, smsNotification);
+          // const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
+          // sendSMS(params.phoneNumber, smsNotification);
           return new HttpResponse(
             res,
             result ? "complain register successfully" : "Failed",
@@ -69,6 +71,25 @@ export const GetComplainFromData = async (req: Request, res: Response) => {
           totalCount,
           currentPage: page,
           totalPages: Math.ceil(totalCount / limit),
+        },
+        HttpStatuses.OK
+      ).sendResponse();
+    });
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+
+export const GetSingleComplainData = async (req: Request, res: Response) => {
+  try {
+    const complainId = req.params.id;
+    GetSingleComplainDataService(complainId, (complaint: any) => {
+      return new HttpResponse(
+        res,
+        "Get single complaint successfully",
+        {
+          complaint,
         },
         HttpStatuses.OK
       ).sendResponse();

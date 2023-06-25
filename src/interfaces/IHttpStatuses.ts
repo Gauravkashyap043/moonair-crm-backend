@@ -5,4 +5,5 @@ export enum HttpStatuses {
   INTERNAL_SERVER_ERROR = 500,
   CONFLICT = 409,
   MOVED = 309,
+  NOT_FOUND = 404,
 }

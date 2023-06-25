@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addEmployeeTypeService = exports.employeeCreateService = void 0;
+exports.getEmployeeByIdService = exports.getAllEmployeeService = exports.addEmployeeTypeService = exports.EmployeeLoginServices = exports.employeeCreateService = void 0;
 var Helper_1 = require("../classes/Helper");
 var Messages_1 = require("../constants/Messages");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
@@ -70,8 +70,54 @@ var employeeCreateService = function (params, callBack) { return __awaiter(void 
     });
 }); };
 exports.employeeCreateService = employeeCreateService;
+var EmployeeLoginServices = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, userMobile, userPassword, _a, error_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 6, , 7]);
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.findOne(params).select("-password").populate("employeeType")];
+            case 1:
+                user = _b.sent();
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({ mobileNumber: params.mobileNumber })];
+            case 2:
+                userMobile = _b.sent();
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({
+                        password: params.password,
+                    })];
+            case 3:
+                userPassword = _b.sent();
+                if (!(userMobile &&
+                    userMobile.length &&
+                    userPassword &&
+                    userPassword.length)) return [3 /*break*/, 5];
+                user = user.toObject();
+                _a = user;
+                return [4 /*yield*/, Helper_1.Helper.generateLoginToken(userMobile)];
+            case 4:
+                _a.accessToken = _b.sent();
+                console.log('--user--', user);
+                callBack(user);
+                return [2 /*return*/];
+            case 5:
+                if (userMobile && !userMobile.length) {
+                    return [2 /*return*/, Helper_1.Helper.throwError(Messages_1.Messages.MOBILE_NOT_EXIST, null, IHttpStatuses_1.HttpStatuses.CONFLICT)];
+                }
+                if (userPassword && !userPassword.length) {
+                    return [2 /*return*/, Helper_1.Helper.throwError(Messages_1.Messages.WRONG_PASSWORD, null, IHttpStatuses_1.HttpStatuses.CONFLICT)];
+                }
+                return [3 /*break*/, 7];
+            case 6:
+                error_2 = _b.sent();
+                callBack(error_2);
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); };
+exports.EmployeeLoginServices = EmployeeLoginServices;
 var addEmployeeTypeService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_2;
+    var result, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -88,11 +134,51 @@ var addEmployeeTypeService = function (params, callBack) { return __awaiter(void
                 callBack(true);
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _a.sent();
-                callBack(error_2);
+                error_3 = _a.sent();
+                callBack(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 exports.addEmployeeTypeService = addEmployeeTypeService;
+var getAllEmployeeService = function (callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find().populate("employeeType")];
+            case 1:
+                result = _a.sent();
+                callBack(result);
+                return [3 /*break*/, 3];
+            case 2:
+                error_4 = _a.sent();
+                callBack(error_4);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllEmployeeService = getAllEmployeeService;
+var getEmployeeByIdService = function (_id, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.findById({ _id: _id }).populate("employeeType")];
+            case 1:
+                result = _a.sent();
+                callBack(result);
+                return [3 /*break*/, 3];
+            case 2:
+                error_5 = _a.sent();
+                callBack(error_5);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getEmployeeByIdService = getEmployeeByIdService;

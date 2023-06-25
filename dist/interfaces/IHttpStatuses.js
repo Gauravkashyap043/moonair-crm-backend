@@ -9,4 +9,5 @@ var HttpStatuses;
     HttpStatuses[HttpStatuses["INTERNAL_SERVER_ERROR"] = 500] = "INTERNAL_SERVER_ERROR";
     HttpStatuses[HttpStatuses["CONFLICT"] = 409] = "CONFLICT";
     HttpStatuses[HttpStatuses["MOVED"] = 309] = "MOVED";
+    HttpStatuses[HttpStatuses["NOT_FOUND"] = 404] = "NOT_FOUND";
 })(HttpStatuses || (exports.HttpStatuses = HttpStatuses = {}));

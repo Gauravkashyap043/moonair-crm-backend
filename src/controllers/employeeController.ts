@@ -4,8 +4,11 @@ import { Messages } from "../constants/Messages";
 import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { EmployeesModel } from "../models/employeeModel";
 import {
+  EmployeeLoginServices,
   addEmployeeTypeService,
   employeeCreateService,
+  getAllEmployeeService,
+  getEmployeeByIdService,
 } from "../services/employeeService";
 import {
   EmployeeTypeModel,
@@ -18,7 +21,7 @@ export const employeeCreateController = (req: Request, res: Response) => {
     fullName: req.body.fullName,
     mobileNumber: req.body.mobileNumber,
     orgName: "moonair",
-    password: req.body.password,
+    password: Helper.hashPassword(req.body.password),
     employeeType: req.body.employeeType,
   };
   employeeCreateService(params, (result: any) => {
@@ -33,6 +36,30 @@ export const employeeCreateController = (req: Request, res: Response) => {
     new HttpResponse(res).sendErrorResponse(result);
   });
 };
+
+export const EmployeeLogin = async (req: Request, res: Response) => {
+  const params = {
+    mobileNumber: req.body.mobileNumber,
+    password: Helper.hashPassword(req.body.password),
+  };
+  try {
+    EmployeeLoginServices(params, (result: any) => {
+      if (result && result.accessToken) {
+        return new HttpResponse(
+          res,
+          "Logged in successfully.",
+          result,
+          HttpStatuses.OK
+        ).sendResponse();
+      }
+      new HttpResponse(res).sendErrorResponse(result);
+    });
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+
 
 export const addEmployeeTypeController = async (
   req: Request,
@@ -52,6 +79,39 @@ export const addEmployeeTypeController = async (
         ).sendResponse();
       }
       new HttpResponse(res).sendErrorResponse(result);
+    });
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+export const getAllEmployee = async (req: Request, res: Response) => {
+  try {
+    getAllEmployeeService((result: any) => {
+      new HttpResponse(
+        res,
+        result ? "Get all Employee Data sucessfully." : "Failed",
+        result,
+        result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
+      ).sendResponse();
+    });
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+}
+
+export const getEmployeeById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params._id
+    console.log(req.params)
+    // console.log(_id)
+    getEmployeeByIdService(id, (result: any) => {
+      new HttpResponse(
+        res,
+        result ? "Get Employee Data successfully." : "Employee not found.",
+        result,
+        result ? HttpStatuses.OK : HttpStatuses.NOT_FOUND
+      ).sendResponse();
     });
   } catch (error) {
     new HttpResponse(res).sendErrorResponse(error);

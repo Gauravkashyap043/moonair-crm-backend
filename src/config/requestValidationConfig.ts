@@ -12,7 +12,7 @@ export const requestValidationConfig = {
       .isLength({ min: 6 }),
     body("orgName").exists(),
   ],
-  employerLogin: [
+  employeeLogin: [
     body("mobileNumber", "Enter a valid mobile number").isLength({
       min: 10,
       max: 10,

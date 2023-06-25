@@ -4,14 +4,14 @@ import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { Helper } from "../classes/Helper";
 import { verifyToken } from "../config/jwtConfig";
 import { Messages } from "../constants/Messages";
-import { ComplainFormRegisterService, GetComplainDataService } from "../services/formService";
+import { ComplainFormDeleteService, ComplainFormRegisterService, ComplainFormUpdateService, GetComplainDataService } from "../services/formService";
 import { Complaint } from "../models/formModels";
-import {sendSMS} from '../assets/notificationSender'
+import { sendSMS } from '../assets/notificationSender'
 
 export const ComplainFormRegister = async (req: Request, res: Response) => {
   try {
     const token = await verifyToken(req.headers.authorization);
-    console.log("----------token-------------", token['0'].fullName)
+    console.log("----------token-------------", token['0'].employeeType[0])
     if (token) {
 
       const params: Complaint = {
@@ -28,7 +28,9 @@ export const ComplainFormRegister = async (req: Request, res: Response) => {
         postalCode: req.body.postalCode,
         dopDate: new Date,
         problem: req.body.problem,
-        
+        registerById: token['0'].employeeType[0],
+        complainStatus: "PENDING"
+
       };
 
       ComplainFormRegisterService(params, (result: boolean) => {
@@ -42,7 +44,7 @@ export const ComplainFormRegister = async (req: Request, res: Response) => {
             result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
           ).sendResponse();
         }
-        new HttpResponse(res).sendErrorResponse(result);
+        new HttpResponse(res).unauthorizedResponse();
       });
       return;
     }
@@ -73,6 +75,76 @@ export const GetComplainFromData = async (req: Request, res: Response) => {
     });
   } catch (error) {
     new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+export const ComplainFormUpdate = async (req: Request, res: Response) => {
+  try {
+    const token = await verifyToken(req.headers.authorization);
+    if (token) {
+      const complainId = req.params.complainId;
+      const updatedParams: Complaint = {
+        complainId: req.body.complainId,
+        dealerName: req.body.dealerName,
+        registerBy: token['0'].fullName,
+        phoneNumber: req.body.phoneNumber,
+        customerName: req.body.customerName,
+        address: req.body.address,
+        city: req.body.city,
+        state: req.body.state,
+        country: req.body.country,
+        postalCode: req.body.postalCode,
+        dopDate: new Date(),
+        problem: req.body.problem,
+        registerById: token['0'].employeeType[0],
+        complainStatus: req.body.complainStatus
+      };
+
+      ComplainFormUpdateService(complainId, updatedParams, (result: boolean) => {
+        if (result === true) {
+          return new HttpResponse(
+            res,
+            result ? "complain updated successfully" : "Failed",
+            updatedParams,
+            result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
+          ).sendResponse();
+        } else {
+          new HttpResponse(res).unauthorizedResponse();
+        }
+      });
+      return;
+    } else {
+      new HttpResponse(res).unauthorizedResponse();
+    }
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+export const ComplainFormDelete = async (req: Request, res: Response) => {
+  try {
+    const token = await verifyToken(req.headers.authorization);
+    if (token) {
+      const complainId = req.params.complainId;
+
+      ComplainFormDeleteService(complainId, (result: boolean) => {
+        if (result === true) {
+          return new HttpResponse(
+            res,
+            result ? "complaint deleted successfully" : "Failed to delete complaint",
+            {},
+            result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
+          ).sendResponse();
+        } else {
+          return new HttpResponse(res).unauthorizedResponse();
+        }
+      });
+      return;
+    } else {
+      return new HttpResponse(res).unauthorizedResponse();
+    }
+  } catch (error) {
+    return new HttpResponse(res).sendErrorResponse(error);
   }
 };
 

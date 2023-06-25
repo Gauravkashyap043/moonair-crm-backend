@@ -51,6 +51,15 @@ var schema = new mongoose_1.Schema({
     problem: {
         type: String,
         required: true
+    },
+    registerById: {
+        type: String,
+        required: true
+    },
+    complainStatus: {
+        type: String,
+        default: "PENDING",
+        // required: true
     }
 }, {
     timestamps: {

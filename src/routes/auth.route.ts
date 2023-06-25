@@ -13,7 +13,7 @@ authRouter.post(
 
 authRouter.post(
   "/admin-login",
-  RequestValidation.validateFunction(requestValidationConfig.employerLogin),
+  // RequestValidation.validateFunction(requestValidationConfig.employerLogin),
   AdminLogin
 );
 

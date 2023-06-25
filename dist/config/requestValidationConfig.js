@@ -14,7 +14,7 @@ exports.requestValidationConfig = {
             .isLength({ min: 6 }),
         (0, express_validator_1.body)("orgName").exists(),
     ],
-    employerLogin: [
+    employeeLogin: [
         (0, express_validator_1.body)("mobileNumber", "Enter a valid mobile number").isLength({
             min: 10,
             max: 10,

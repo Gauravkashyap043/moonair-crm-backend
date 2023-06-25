@@ -29,6 +29,48 @@ export const employeeCreateService = async (
   }
 };
 
+export const EmployeeLoginServices = async (
+  params: { mobileNumber: number; password: string },
+  callBack: Function
+) => {
+  try {
+    let user: any = await EmployeesSchema.findOne(params).select("-password").populate("employeeType");
+    let userMobile = await EmployeesSchema.find({ mobileNumber: params.mobileNumber });
+    let userPassword = await EmployeesSchema.find({
+      password: params.password,
+    });
+
+    if (
+      userMobile &&
+      userMobile.length &&
+      userPassword &&
+      userPassword.length
+    ) {
+      user = user.toObject();
+      user.accessToken = await Helper.generateLoginToken(userMobile);
+      console.log('--user--', user)
+      callBack(user);
+      return;
+    }
+    if (userMobile && !userMobile.length) {
+      return Helper.throwError(
+        Messages.MOBILE_NOT_EXIST,
+        null,
+        HttpStatuses.CONFLICT
+      );
+    }
+    if (userPassword && !userPassword.length) {
+      return Helper.throwError(
+        Messages.WRONG_PASSWORD,
+        null,
+        HttpStatuses.CONFLICT
+      );
+    }
+  } catch (error) {
+    callBack(error);
+  }
+};
+
 export const addEmployeeTypeService = async (
   params: EmployeeTypeModel,
   callBack: Function
@@ -44,6 +86,26 @@ export const addEmployeeTypeService = async (
     }
     await EmployeeTypeSchema.create(params);
     callBack(true);
+  } catch (error) {
+    callBack(error);
+  }
+};
+
+
+export const getAllEmployeeService = async (callBack: Function) => {
+  try {
+    const result = await EmployeesSchema.find().populate("employeeType");
+    callBack(result)
+  } catch (error) {
+    callBack(error)
+  }
+
+}
+
+export const getEmployeeByIdService = async (_id: string, callBack: Function) => {
+  try {
+    const result = await EmployeesSchema.findById({ _id }).populate("employeeType");
+    callBack(result);
   } catch (error) {
     callBack(error);
   }

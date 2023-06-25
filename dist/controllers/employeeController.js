@@ -36,17 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addEmployeeTypeController = exports.employeeCreateController = void 0;
+exports.getEmployeeById = exports.getAllEmployee = exports.addEmployeeTypeController = exports.EmployeeLogin = exports.employeeCreateController = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var Messages_1 = require("../constants/Messages");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var employeeService_1 = require("../services/employeeService");
+var Helper_1 = require("../classes/Helper");
 var employeeCreateController = function (req, res) {
     var params = {
         fullName: req.body.fullName,
         mobileNumber: req.body.mobileNumber,
         orgName: "moonair",
-        password: req.body.password,
+        password: Helper_1.Helper.hashPassword(req.body.password),
         employeeType: req.body.employeeType,
     };
     (0, employeeService_1.employeeCreateService)(params, function (result) {
@@ -57,6 +58,28 @@ var employeeCreateController = function (req, res) {
     });
 };
 exports.employeeCreateController = employeeCreateController;
+var EmployeeLogin = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var params;
+    return __generator(this, function (_a) {
+        params = {
+            mobileNumber: req.body.mobileNumber,
+            password: Helper_1.Helper.hashPassword(req.body.password),
+        };
+        try {
+            (0, employeeService_1.EmployeeLoginServices)(params, function (result) {
+                if (result && result.accessToken) {
+                    return new HttpResponse_1.HttpResponse(res, "Logged in successfully.", result, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+                }
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(result);
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.EmployeeLogin = EmployeeLogin;
 var addEmployeeTypeController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var params;
     return __generator(this, function (_a) {
@@ -78,3 +101,35 @@ var addEmployeeTypeController = function (req, res) { return __awaiter(void 0, v
     });
 }); };
 exports.addEmployeeTypeController = addEmployeeTypeController;
+var getAllEmployee = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            (0, employeeService_1.getAllEmployeeService)(function (result) {
+                new HttpResponse_1.HttpResponse(res, result ? "Get all Employee Data sucessfully." : "Failed", result, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.getAllEmployee = getAllEmployee;
+var getEmployeeById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id;
+    return __generator(this, function (_a) {
+        try {
+            id = req.params._id;
+            console.log(req.params);
+            // console.log(_id)
+            (0, employeeService_1.getEmployeeByIdService)(id, function (result) {
+                new HttpResponse_1.HttpResponse(res, result ? "Get Employee Data successfully." : "Employee not found.", result, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.NOT_FOUND).sendResponse();
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.getEmployeeById = getEmployeeById;

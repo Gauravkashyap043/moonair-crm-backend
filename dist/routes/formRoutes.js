@@ -8,4 +8,6 @@ var formControllers_1 = require("../controllers/formControllers");
 var formRouter = express_1.default.Router();
 formRouter.post("/complain-form", formControllers_1.ComplainFormRegister);
 formRouter.get("/complain-data", formControllers_1.GetComplainFromData);
+formRouter.put("/complain-form/:complainId", formControllers_1.ComplainFormUpdate);
+formRouter.delete("/complain-form/:complainId", formControllers_1.ComplainFormDelete);
 exports.default = formRouter;

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
+exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var jwtConfig_1 = require("../config/jwtConfig");
@@ -51,7 +51,7 @@ var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0
                 return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
             case 1:
                 token_1 = _a.sent();
-                console.log("----------token-------------", token_1['0'].fullName);
+                console.log("----------token-------------", token_1['0'].employeeType[0]);
                 if (token_1) {
                     params_1 = {
                         complainId: req.body.complainId,
@@ -66,6 +66,8 @@ var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0
                         postalCode: req.body.postalCode,
                         dopDate: new Date,
                         problem: req.body.problem,
+                        registerById: token_1['0'].employeeType[0],
+                        complainStatus: "PENDING"
                     };
                     (0, formService_1.ComplainFormRegisterService)(params_1, function (result) {
                         if (result === true) {
@@ -73,7 +75,7 @@ var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0
                             (0, notificationSender_1.sendSMS)(params_1.phoneNumber, smsNotification);
                             return new HttpResponse_1.HttpResponse(res, result ? "complain register successfully" : "Failed", params_1, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
                         }
-                        new HttpResponse_1.HttpResponse(res).sendErrorResponse(result);
+                        new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
                     });
                     return [2 /*return*/];
                 }
@@ -112,3 +114,86 @@ var GetComplainFromData = function (req, res) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.GetComplainFromData = GetComplainFromData;
+var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, complainId, updatedParams_1, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
+            case 1:
+                token = _a.sent();
+                if (token) {
+                    complainId = req.params.complainId;
+                    updatedParams_1 = {
+                        complainId: req.body.complainId,
+                        dealerName: req.body.dealerName,
+                        registerBy: token['0'].fullName,
+                        phoneNumber: req.body.phoneNumber,
+                        customerName: req.body.customerName,
+                        address: req.body.address,
+                        city: req.body.city,
+                        state: req.body.state,
+                        country: req.body.country,
+                        postalCode: req.body.postalCode,
+                        dopDate: new Date(),
+                        problem: req.body.problem,
+                        registerById: token['0'].employeeType[0],
+                        complainStatus: req.body.complainStatus
+                    };
+                    (0, formService_1.ComplainFormUpdateService)(complainId, updatedParams_1, function (result) {
+                        if (result === true) {
+                            return new HttpResponse_1.HttpResponse(res, result ? "complain updated successfully" : "Failed", updatedParams_1, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
+                        }
+                        else {
+                            new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
+                        }
+                    });
+                    return [2 /*return*/];
+                }
+                else {
+                    new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.ComplainFormUpdate = ComplainFormUpdate;
+var ComplainFormDelete = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, complainId, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
+            case 1:
+                token = _a.sent();
+                if (token) {
+                    complainId = req.params.complainId;
+                    (0, formService_1.ComplainFormDeleteService)(complainId, function (result) {
+                        if (result === true) {
+                            return new HttpResponse_1.HttpResponse(res, result ? "complaint deleted successfully" : "Failed to delete complaint", {}, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
+                        }
+                        else {
+                            return new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
+                        }
+                    });
+                    return [2 /*return*/];
+                }
+                else {
+                    return [2 /*return*/, new HttpResponse_1.HttpResponse(res).unauthorizedResponse()];
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                error_3 = _a.sent();
+                return [2 /*return*/, new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_3)];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.ComplainFormDelete = ComplainFormDelete;

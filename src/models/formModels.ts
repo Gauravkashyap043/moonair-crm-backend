@@ -15,7 +15,8 @@ export interface Complaint {
   postalCode: number;
   dopDate: Date;
   problem: string;
-  // complainStatus:string;
+  registerById?:string;
+  complainStatus:string;
   // files:string;
 }
 
@@ -67,7 +68,17 @@ const schema = new Schema<Complaint>({
   problem: {
     type: String,
     required: true
+  },
+  registerById: {
+    type: String,
+    required: true
+  },
+  complainStatus:{
+    type: String,
+    default: "PENDING",
+    // required: true
   }
+  
 },
   {
     timestamps: {

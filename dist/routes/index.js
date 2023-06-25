@@ -9,6 +9,6 @@ var formRoutes_1 = __importDefault(require("./formRoutes"));
 var employee_route_1 = __importDefault(require("./employee.route"));
 var router = express_1.default.Router();
 router.use("/auth", auth_route_1.default);
-router.use("/", formRoutes_1.default);
+router.use("/form", formRoutes_1.default);
 router.use("/employee", employee_route_1.default);
 exports.default = router;

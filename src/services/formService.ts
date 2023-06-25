@@ -4,43 +4,67 @@ import { Complaint, complainFormSchema } from "../models/formModels";
 import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { EmployeeTypeSchema } from "../models/employeeTypeModel";
 import mongoose from "mongoose";
+import { EmployeesSchema } from "../models/employeeModel";
 
 export const ComplainFormRegisterService = async (
   params: Complaint,
   callBack: Function
 ) => {
   try {
-    const employeeTpye = await EmployeeTypeSchema.findById({ _id: params.registerById })
-    if (employeeTpye.type === "service") {
+    const employeeType = await EmployeesSchema.find({
+      _id: params.registerBy,
+    }).populate("employeeType");
+    if (
+      employeeType[0].employeeType[0].type === "service" ||
+      employeeType[0].employeeType[0].type === "admin"
+    ) {
       await complainFormSchema.create(params);
       callBack(true);
+      return;
     }
-    callBack(false)
+    callBack(false);
   } catch (error) {
     callBack(error);
   }
 };
 
-export const GetSingleComplainDataService = async (complainId: string, callBack: Function) => {
+export const GetSingleComplainDataService = async (
+  complainId: string,
+  callBack: Function
+) => {
   try {
-    const isValidObjectId = mongoose.Types.ObjectId.isValid(complainId);
-
-    if (!isValidObjectId) {
-      throw new Error('Invalid complaint ID');
-    }
-
-    const complaint = await complainFormSchema.findById({complainId});
+    const complaint = await complainFormSchema
+      .find({
+        complainId,
+      })
+      .lean()
+      .populate({
+        path: "registerBy",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+          },
+        ],
+      })
+      .populate({
+        path: "updatedBy",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+          },
+        ],
+      });
 
     if (!complaint) {
-      throw new Error('Complaint not found');
+      throw new Error("Complaint not found");
     }
-
     callBack(complaint);
   } catch (error) {
     callBack(error);
   }
 };
-
 
 export const GetComplainDataService = async (
   search: string,
@@ -87,10 +111,44 @@ export const ComplainFormDeleteService = async (
   callBack: Function
 ) => {
   try {
-    await complainFormSchema.findOneAndDelete({ complainId:complainId });
+    await complainFormSchema.findOneAndDelete({ complainId: complainId });
     callBack(true);
   } catch (error) {
     callBack(error);
   }
 };
 
+export const updateComplainStatusService = async (
+  params: { status: string; updatedBy: string; complainId: string },
+  callBack: Function
+) => {
+  try {
+    const employeeType = await EmployeesSchema.find({
+      _id: params.updatedBy,
+    }).populate("employeeType");
+    if (!employeeType && employeeType.length === 0) {
+      return Helper.throwError("No data found", false, HttpStatuses.NOT_FOUND);
+    }
+    if (
+      employeeType[0].employeeType[0].type === "technician" ||
+      employeeType[0].employeeType[0].type === "admin"
+    ) {
+      await complainFormSchema.findOneAndUpdate(
+        {
+          complainId: params.complainId,
+        },
+        {
+          $set: {
+            complainStatus: params.status,
+            updatedBy: params.updatedBy,
+          },
+        }
+      );
+      callBack(true);
+      return;
+    }
+    return callBack(false);
+  } catch (error) {
+    callBack(error);
+  }
+};

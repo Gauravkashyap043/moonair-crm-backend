@@ -35,29 +35,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
+exports.updateComplainStatusService = exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
+var Helper_1 = require("../classes/Helper");
 var formModels_1 = require("../models/formModels");
-var employeeTypeModel_1 = require("../models/employeeTypeModel");
-var mongoose_1 = __importDefault(require("mongoose"));
+var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
+var employeeModel_1 = require("../models/employeeModel");
 var ComplainFormRegisterService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var employeeTpye, error_1;
+    var employeeType, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.findById({ _id: params.registerById })];
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({
+                        _id: params.registerBy,
+                    }).populate("employeeType")];
             case 1:
-                employeeTpye = _a.sent();
-                if (!(employeeTpye.type === "service")) return [3 /*break*/, 3];
+                employeeType = _a.sent();
+                if (!(employeeType[0].employeeType[0].type === "service" ||
+                    employeeType[0].employeeType[0].type === "admin")) return [3 /*break*/, 3];
                 return [4 /*yield*/, formModels_1.complainFormSchema.create(params)];
             case 2:
                 _a.sent();
                 callBack(true);
-                _a.label = 3;
+                return [2 /*return*/];
             case 3:
                 callBack(false);
                 return [3 /*break*/, 5];
@@ -71,20 +72,38 @@ var ComplainFormRegisterService = function (params, callBack) { return __awaiter
 }); };
 exports.ComplainFormRegisterService = ComplainFormRegisterService;
 var GetSingleComplainDataService = function (complainId, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var isValidObjectId, complaint, error_2;
+    var complaint, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                isValidObjectId = mongoose_1.default.Types.ObjectId.isValid(complainId);
-                if (!isValidObjectId) {
-                    throw new Error('Invalid complaint ID');
-                }
-                return [4 /*yield*/, formModels_1.complainFormSchema.findById({ complainId: complainId })];
+                return [4 /*yield*/, formModels_1.complainFormSchema
+                        .find({
+                        complainId: complainId,
+                    })
+                        .lean()
+                        .populate({
+                        path: "registerBy",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                            },
+                        ],
+                    })
+                        .populate({
+                        path: "updatedBy",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                            },
+                        ],
+                    })];
             case 1:
                 complaint = _a.sent();
                 if (!complaint) {
-                    throw new Error('Complaint not found');
+                    throw new Error("Complaint not found");
                 }
                 callBack(complaint);
                 return [3 /*break*/, 3];
@@ -168,3 +187,41 @@ var ComplainFormDeleteService = function (complainId, callBack) { return __await
     });
 }); };
 exports.ComplainFormDeleteService = ComplainFormDeleteService;
+var updateComplainStatusService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var employeeType, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({
+                        _id: params.updatedBy,
+                    }).populate("employeeType")];
+            case 1:
+                employeeType = _a.sent();
+                if (!employeeType && employeeType.length === 0) {
+                    return [2 /*return*/, Helper_1.Helper.throwError("No data found", false, IHttpStatuses_1.HttpStatuses.NOT_FOUND)];
+                }
+                if (!(employeeType[0].employeeType[0].type === "technician" ||
+                    employeeType[0].employeeType[0].type === "admin")) return [3 /*break*/, 3];
+                return [4 /*yield*/, formModels_1.complainFormSchema.findOneAndUpdate({
+                        complainId: params.complainId,
+                    }, {
+                        $set: {
+                            complainStatus: params.status,
+                            updatedBy: params.updatedBy,
+                        },
+                    })];
+            case 2:
+                _a.sent();
+                callBack(true);
+                return [2 /*return*/];
+            case 3: return [2 /*return*/, callBack(false)];
+            case 4:
+                error_6 = _a.sent();
+                callBack(error_6);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.updateComplainStatusService = updateComplainStatusService;

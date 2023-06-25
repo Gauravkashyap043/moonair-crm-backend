@@ -36,10 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
+exports.updateComplainStatusController = exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var jwtConfig_1 = require("../config/jwtConfig");
+var Messages_1 = require("../constants/Messages");
 var formService_1 = require("../services/formService");
 var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var token, params_1, error_1;
@@ -51,11 +52,10 @@ var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0
             case 1:
                 token = _a.sent();
                 if (token) {
-                    console.log("----------token-------------", token['0']);
                     params_1 = {
                         complainId: req.body.complainId,
                         dealerName: req.body.dealerName,
-                        registerBy: token['0'].fullName,
+                        registerBy: token[0]._id,
                         phoneNumber: req.body.phoneNumber,
                         customerName: req.body.customerName,
                         address: req.body.address,
@@ -63,12 +63,10 @@ var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0
                         state: req.body.state,
                         country: req.body.country,
                         postalCode: req.body.postalCode,
-                        dopDate: new Date,
+                        dopDate: new Date(),
                         problem: req.body.problem,
-                        registerById: token['0'].employeeType[0],
-                        complainStatus: "PENDING"
+                        complainStatus: "PENDING",
                     };
-                    console.log("========params==============", params_1);
                     (0, formService_1.ComplainFormRegisterService)(params_1, function (result) {
                         if (result === true) {
                             // const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
@@ -146,7 +144,7 @@ var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, 
                     updatedParams_1 = {
                         complainId: req.body.complainId,
                         dealerName: req.body.dealerName,
-                        registerBy: token['0'].fullName,
+                        registerBy: token["0"].fullName,
                         phoneNumber: req.body.phoneNumber,
                         customerName: req.body.customerName,
                         address: req.body.address,
@@ -156,8 +154,7 @@ var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, 
                         postalCode: req.body.postalCode,
                         dopDate: new Date(),
                         problem: req.body.problem,
-                        registerById: token['0'].employeeType[0],
-                        complainStatus: req.body.complainStatus
+                        complainStatus: req.body.complainStatus,
                     };
                     (0, formService_1.ComplainFormUpdateService)(complainId, updatedParams_1, function (result) {
                         if (result === true) {
@@ -195,7 +192,9 @@ var ComplainFormDelete = function (req, res) { return __awaiter(void 0, void 0, 
                     complainId = req.params.complainId;
                     (0, formService_1.ComplainFormDeleteService)(complainId, function (result) {
                         if (result === true) {
-                            return new HttpResponse_1.HttpResponse(res, result ? "complaint deleted successfully" : "Failed to delete complaint", {}, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
+                            return new HttpResponse_1.HttpResponse(res, result
+                                ? "complaint deleted successfully"
+                                : "Failed to delete complaint", {}, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
                         }
                         else {
                             return new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
@@ -215,3 +214,39 @@ var ComplainFormDelete = function (req, res) { return __awaiter(void 0, void 0, 
     });
 }); };
 exports.ComplainFormDelete = ComplainFormDelete;
+var updateComplainStatusController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, params, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
+            case 1:
+                token = _a.sent();
+                params = {
+                    status: req.body.status,
+                    updatedBy: token[0]._id,
+                    complainId: req.body.complainId,
+                };
+                if (token) {
+                    (0, formService_1.updateComplainStatusService)(params, function (result) {
+                        if (result === false) {
+                            return new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
+                        }
+                        if (result === true) {
+                            return new HttpResponse_1.HttpResponse(res, Messages_1.Messages.COMPLAIN_UPDATED, result, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+                        }
+                        new HttpResponse_1.HttpResponse(res).sendErrorResponse(result);
+                    });
+                    return [2 /*return*/];
+                }
+                return [2 /*return*/, new HttpResponse_1.HttpResponse(res).unauthorizedResponse()];
+            case 2:
+                error_4 = _a.sent();
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_4);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.updateComplainStatusController = updateComplainStatusController;

@@ -6,7 +6,7 @@ import employeeRouter from "./employee.route";
 const router = express.Router();
 
 router.use("/auth", authRouter);
-router.use("/", formRouter);
+router.use("/form", formRouter);
 router.use("/employee", employeeRouter);
 
 export default router;

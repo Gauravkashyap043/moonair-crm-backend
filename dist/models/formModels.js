@@ -6,65 +6,76 @@ var IDatabaseSchema_1 = require("../interfaces/IDatabaseSchema");
 var schema = new mongoose_1.Schema({
     complainId: {
         type: String,
-        required: true
+        required: true,
     },
     dealerName: {
         type: String,
-        required: true
+        required: true,
     },
     customerName: {
         type: String,
-        required: true
+        required: true,
     },
     phoneNumber: {
         type: String,
-        required: true
+        required: true,
     },
     altPhoneNumber: {
         type: String,
-        required: false
+        required: false,
     },
     address: {
         type: String,
-        required: true
+        required: true,
     },
     city: {
         type: String,
-        required: true
+        required: true,
     },
     state: {
         type: String,
-        required: true
+        required: true,
     },
     country: {
         type: String,
-        required: true
+        required: true,
     },
     postalCode: {
         type: Number,
-        required: true
+        required: true,
     },
     dopDate: {
         type: Date,
-        required: true
+        required: true,
     },
     problem: {
         type: String,
-        required: true
+        required: true,
     },
-    registerById: {
-        type: String,
-        required: true
+    registerBy: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: IDatabaseSchema_1.IDatabaseSchema.EMPLOYEE,
     },
     complainStatus: {
         type: String,
         default: "PENDING",
-        // required: true
-    }
+        required: true,
+    },
+    updatedBy: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: IDatabaseSchema_1.IDatabaseSchema.EMPLOYEE,
+    },
+    assignedTo: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: true,
+        ref: IDatabaseSchema_1.IDatabaseSchema.EMPLOYEE,
+    },
 }, {
     timestamps: {
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt'
-    }
+        createdAt: "createdAt",
+        updatedAt: "updatedAt",
+    },
 });
 exports.complainFormSchema = (0, mongoose_1.model)(IDatabaseSchema_1.IDatabaseSchema.COMPLAINFORM, schema);

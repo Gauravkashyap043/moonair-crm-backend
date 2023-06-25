@@ -4,21 +4,25 @@ import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { Helper } from "../classes/Helper";
 import { verifyToken } from "../config/jwtConfig";
 import { Messages } from "../constants/Messages";
-import { ComplainFormDeleteService, ComplainFormRegisterService, ComplainFormUpdateService, GetComplainDataService, GetSingleComplainDataService } from "../services/formService";
+import {
+  ComplainFormDeleteService,
+  ComplainFormRegisterService,
+  ComplainFormUpdateService,
+  GetComplainDataService,
+  GetSingleComplainDataService,
+  updateComplainStatusService,
+} from "../services/formService";
 import { Complaint } from "../models/formModels";
-import { sendSMS } from '../assets/notificationSender'
+import { sendSMS } from "../assets/notificationSender";
 
 export const ComplainFormRegister = async (req: Request, res: Response) => {
   try {
     const token = await verifyToken(req.headers.authorization);
     if (token) {
-      console.log("----------token-------------", token['0'])
-
       const params: Complaint = {
-
         complainId: req.body.complainId,
         dealerName: req.body.dealerName,
-        registerBy: token['0'].fullName,
+        registerBy: token[0]._id,
         phoneNumber: req.body.phoneNumber,
         customerName: req.body.customerName,
         address: req.body.address,
@@ -26,15 +30,10 @@ export const ComplainFormRegister = async (req: Request, res: Response) => {
         state: req.body.state,
         country: req.body.country,
         postalCode: req.body.postalCode,
-        dopDate: new Date,
+        dopDate: new Date(),
         problem: req.body.problem,
-        registerById: token['0'].employeeType[0],
-        complainStatus: "PENDING"
-
+        complainStatus: "PENDING",
       };
-
-
-      console.log("========params==============",params)
       ComplainFormRegisterService(params, (result: boolean) => {
         if (result === true) {
           // const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
@@ -54,7 +53,7 @@ export const ComplainFormRegister = async (req: Request, res: Response) => {
   } catch (error) {
     new HttpResponse(res).sendErrorResponse(error);
   }
-}
+};
 
 export const GetComplainFromData = async (req: Request, res: Response) => {
   try {
@@ -62,24 +61,28 @@ export const GetComplainFromData = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
 
-    GetComplainDataService(search, page, limit, (complaints: any[], totalCount: number) => {
-      return new HttpResponse(
-        res,
-        "Get data successfully",
-        {
-          complaints,
-          totalCount,
-          currentPage: page,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        HttpStatuses.OK
-      ).sendResponse();
-    });
+    GetComplainDataService(
+      search,
+      page,
+      limit,
+      (complaints: any[], totalCount: number) => {
+        return new HttpResponse(
+          res,
+          "Get data successfully",
+          {
+            complaints,
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+          HttpStatuses.OK
+        ).sendResponse();
+      }
+    );
   } catch (error) {
     new HttpResponse(res).sendErrorResponse(error);
   }
 };
-
 
 export const GetSingleComplainData = async (req: Request, res: Response) => {
   try {
@@ -107,7 +110,7 @@ export const ComplainFormUpdate = async (req: Request, res: Response) => {
       const updatedParams: Complaint = {
         complainId: req.body.complainId,
         dealerName: req.body.dealerName,
-        registerBy: token['0'].fullName,
+        registerBy: token["0"].fullName,
         phoneNumber: req.body.phoneNumber,
         customerName: req.body.customerName,
         address: req.body.address,
@@ -117,22 +120,25 @@ export const ComplainFormUpdate = async (req: Request, res: Response) => {
         postalCode: req.body.postalCode,
         dopDate: new Date(),
         problem: req.body.problem,
-        registerById: token['0'].employeeType[0],
-        complainStatus: req.body.complainStatus
+        complainStatus: req.body.complainStatus,
       };
 
-      ComplainFormUpdateService(complainId, updatedParams, (result: boolean) => {
-        if (result === true) {
-          return new HttpResponse(
-            res,
-            result ? "complain updated successfully" : "Failed",
-            updatedParams,
-            result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
-          ).sendResponse();
-        } else {
-          new HttpResponse(res).unauthorizedResponse();
+      ComplainFormUpdateService(
+        complainId,
+        updatedParams,
+        (result: boolean) => {
+          if (result === true) {
+            return new HttpResponse(
+              res,
+              result ? "complain updated successfully" : "Failed",
+              updatedParams,
+              result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
+            ).sendResponse();
+          } else {
+            new HttpResponse(res).unauthorizedResponse();
+          }
         }
-      });
+      );
       return;
     } else {
       new HttpResponse(res).unauthorizedResponse();
@@ -152,7 +158,9 @@ export const ComplainFormDelete = async (req: Request, res: Response) => {
         if (result === true) {
           return new HttpResponse(
             res,
-            result ? "complaint deleted successfully" : "Failed to delete complaint",
+            result
+              ? "complaint deleted successfully"
+              : "Failed to delete complaint",
             {},
             result ? HttpStatuses.OK : HttpStatuses.BAD_REQUEST
           ).sendResponse();
@@ -169,4 +177,36 @@ export const ComplainFormDelete = async (req: Request, res: Response) => {
   }
 };
 
-
+export const updateComplainStatusController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const token = await verifyToken(req.headers.authorization);
+    const params = {
+      status: req.body.status,
+      updatedBy: token[0]._id,
+      complainId: req.body.complainId,
+    };
+    if (token) {
+      updateComplainStatusService(params, (result: any) => {
+        if (result === false) {
+          return new HttpResponse(res).unauthorizedResponse();
+        }
+        if (result === true) {
+          return new HttpResponse(
+            res,
+            Messages.COMPLAIN_UPDATED,
+            result,
+            HttpStatuses.OK
+          ).sendResponse();
+        }
+        new HttpResponse(res).sendErrorResponse(result);
+      });
+      return;
+    }
+    return new HttpResponse(res).unauthorizedResponse();
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};

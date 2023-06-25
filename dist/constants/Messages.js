@@ -17,4 +17,6 @@ exports.Messages = {
     INVALID_TOKEN: "Invalid token.",
     USER_UNAUTHORIZED: "User unauthorized.",
     INTERNAL_SERVER_ERROR: "Internal Server Error. Kindly contact admin.",
+    COMPLAIN_UPDATED: "Complain updated successfully.",
+    FAILED: "Failed",
 };

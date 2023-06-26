@@ -8,10 +8,6 @@ var schema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    dealerName: {
-        type: String,
-        required: true,
-    },
     customerName: {
         type: String,
         required: true,
@@ -64,12 +60,12 @@ var schema = new mongoose_1.Schema({
     },
     updatedBy: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: IDatabaseSchema_1.IDatabaseSchema.EMPLOYEE,
     },
     assignedTo: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: IDatabaseSchema_1.IDatabaseSchema.EMPLOYEE,
     },
 }, {

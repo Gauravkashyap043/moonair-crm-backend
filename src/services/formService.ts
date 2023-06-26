@@ -14,6 +14,7 @@ export const ComplainFormRegisterService = async (
     const employeeType = await EmployeesSchema.find({
       _id: params.registerBy,
     }).populate("employeeType");
+    console.log("sadfasdfasdfds---------",employeeType[0].employeeType[0].type)
     if (
       employeeType[0].employeeType[0].type === "service" ||
       employeeType[0].employeeType[0].type === "admin"
@@ -148,6 +149,38 @@ export const updateComplainStatusService = async (
       return;
     }
     return callBack(false);
+  } catch (error) {
+    callBack(error);
+  }
+};
+
+
+export const GetComplainDataServiceByRegister = async (
+  search: string,
+  page: number,
+  limit: number,
+  registerById: string, // Add the registerBy ObjectId parameter
+  callBack: Function
+) => {
+  try {
+    let query: any = {}; // Initialize an empty query
+
+    if (search) {
+      query = { $text: { $search: search } };
+    }
+
+    // Add the registerBy ObjectId to the query
+    query.registerBy = registerById;
+
+    const totalCount = await complainFormSchema.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const complaints = await complainFormSchema
+      .find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    callBack(complaints, totalCount, page, totalPages);
   } catch (error) {
     callBack(error);
   }

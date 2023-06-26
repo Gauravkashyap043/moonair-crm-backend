@@ -9,19 +9,37 @@ import {
   ComplainFormRegisterService,
   ComplainFormUpdateService,
   GetComplainDataService,
+  GetComplainDataServiceByRegister,
   GetSingleComplainDataService,
   updateComplainStatusService,
 } from "../services/formService";
-import { Complaint } from "../models/formModels";
+import { Complaint, complainFormSchema } from "../models/formModels";
 import { sendSMS } from "../assets/notificationSender";
 
 export const ComplainFormRegister = async (req: Request, res: Response) => {
   try {
     const token = await verifyToken(req.headers.authorization);
     if (token) {
+      const getFormattedDate = () => {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear().toString();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const date = currentDate.getDate().toString().padStart(2, '0');
+        return `${date}${month}${year}`;
+      };
+      const formattedDate = getFormattedDate();
+
+      const lastComplaint = await complainFormSchema.findOne(
+        { complainId: { $regex: `^${formattedDate}MA` } },
+        {},
+        { sort: { complainId: -1 } }
+      );
+      const lastComplaintId = lastComplaint
+        ? parseInt(lastComplaint.complainId.substring(10))
+        : 0;
+      const newComplaintId = (lastComplaintId + 1).toString().padStart(4, '0');
       const params: Complaint = {
-        complainId: req.body.complainId,
-        dealerName: req.body.dealerName,
+        complainId: `${formattedDate}MA${newComplaintId}`,
         registerBy: token[0]._id,
         phoneNumber: req.body.phoneNumber,
         customerName: req.body.customerName,
@@ -109,7 +127,6 @@ export const ComplainFormUpdate = async (req: Request, res: Response) => {
       const complainId = req.params.complainId;
       const updatedParams: Complaint = {
         complainId: req.body.complainId,
-        dealerName: req.body.dealerName,
         registerBy: token["0"].fullName,
         phoneNumber: req.body.phoneNumber,
         customerName: req.body.customerName,
@@ -206,6 +223,37 @@ export const updateComplainStatusController = async (
       return;
     }
     return new HttpResponse(res).unauthorizedResponse();
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+export const GetComplainFromDataByRegister = async (req: Request, res: Response) => {
+  try {
+    const search = req.query.search?.toString() || "";
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const registerById = req.params.id; // Get the registerBy ObjectId from the route parameter
+
+    GetComplainDataServiceByRegister(
+      search,
+      page,
+      limit,
+      registerById,
+      (complaints: any[], totalCount: number) => {
+        return new HttpResponse(
+          res,
+          "Get data successfully",
+          {
+            complaints,
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+          HttpStatuses.OK
+        ).sendResponse();
+      }
+    );
   } catch (error) {
     new HttpResponse(res).sendErrorResponse(error);
   }

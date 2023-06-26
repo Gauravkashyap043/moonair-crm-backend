@@ -36,54 +36,69 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateComplainStatusController = exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
+exports.GetComplainFromDataByRegister = exports.updateComplainStatusController = exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var jwtConfig_1 = require("../config/jwtConfig");
 var Messages_1 = require("../constants/Messages");
 var formService_1 = require("../services/formService");
+var formModels_1 = require("../models/formModels");
 var ComplainFormRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, params_1, error_1;
+    var token, getFormattedDate, formattedDate, lastComplaint, lastComplaintId, newComplaintId, params_1, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
+                _a.trys.push([0, 4, , 5]);
                 return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
             case 1:
                 token = _a.sent();
-                if (token) {
-                    params_1 = {
-                        complainId: req.body.complainId,
-                        dealerName: req.body.dealerName,
-                        registerBy: token[0]._id,
-                        phoneNumber: req.body.phoneNumber,
-                        customerName: req.body.customerName,
-                        address: req.body.address,
-                        city: req.body.city,
-                        state: req.body.state,
-                        country: req.body.country,
-                        postalCode: req.body.postalCode,
-                        dopDate: new Date(),
-                        problem: req.body.problem,
-                        complainStatus: "PENDING",
-                    };
-                    (0, formService_1.ComplainFormRegisterService)(params_1, function (result) {
-                        if (result === true) {
-                            // const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
-                            // sendSMS(params.phoneNumber, smsNotification);
-                            return new HttpResponse_1.HttpResponse(res, result ? "complain register successfully" : "Failed", params_1, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
-                        }
-                        new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
-                    });
-                    return [2 /*return*/];
-                }
-                new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
-                return [3 /*break*/, 3];
+                if (!token) return [3 /*break*/, 3];
+                getFormattedDate = function () {
+                    var currentDate = new Date();
+                    var year = currentDate.getFullYear().toString();
+                    var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+                    var date = currentDate.getDate().toString().padStart(2, '0');
+                    return "".concat(date).concat(month).concat(year);
+                };
+                formattedDate = getFormattedDate();
+                return [4 /*yield*/, formModels_1.complainFormSchema.findOne({ complainId: { $regex: "^".concat(formattedDate, "MA") } }, {}, { sort: { complainId: -1 } })];
             case 2:
+                lastComplaint = _a.sent();
+                lastComplaintId = lastComplaint
+                    ? parseInt(lastComplaint.complainId.substring(10))
+                    : 0;
+                newComplaintId = (lastComplaintId + 1).toString().padStart(4, '0');
+                params_1 = {
+                    complainId: "".concat(formattedDate, "MA").concat(newComplaintId),
+                    registerBy: token[0]._id,
+                    phoneNumber: req.body.phoneNumber,
+                    customerName: req.body.customerName,
+                    address: req.body.address,
+                    city: req.body.city,
+                    state: req.body.state,
+                    country: req.body.country,
+                    postalCode: req.body.postalCode,
+                    dopDate: new Date(),
+                    problem: req.body.problem,
+                    complainStatus: "PENDING",
+                };
+                (0, formService_1.ComplainFormRegisterService)(params_1, function (result) {
+                    if (result === true) {
+                        // const smsNotification = `${params.customerName} Your complaint has been registered successfully by ${token['0'].fullName}. Complaint ID: ${params.complainId}`;
+                        // sendSMS(params.phoneNumber, smsNotification);
+                        return new HttpResponse_1.HttpResponse(res, result ? "complain register successfully" : "Failed", params_1, result ? IHttpStatuses_1.HttpStatuses.OK : IHttpStatuses_1.HttpStatuses.BAD_REQUEST).sendResponse();
+                    }
+                    new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
+                });
+                return [2 /*return*/];
+            case 3:
+                new HttpResponse_1.HttpResponse(res).unauthorizedResponse();
+                return [3 /*break*/, 5];
+            case 4:
                 error_1 = _a.sent();
                 new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); };
@@ -143,7 +158,6 @@ var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, 
                     complainId = req.params.complainId;
                     updatedParams_1 = {
                         complainId: req.body.complainId,
-                        dealerName: req.body.dealerName,
                         registerBy: token["0"].fullName,
                         phoneNumber: req.body.phoneNumber,
                         customerName: req.body.customerName,
@@ -250,3 +264,28 @@ var updateComplainStatusController = function (req, res) { return __awaiter(void
     });
 }); };
 exports.updateComplainStatusController = updateComplainStatusController;
+var GetComplainFromDataByRegister = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var search, page_2, limit_2, registerById;
+    var _a;
+    return __generator(this, function (_b) {
+        try {
+            search = ((_a = req.query.search) === null || _a === void 0 ? void 0 : _a.toString()) || "";
+            page_2 = parseInt(req.query.page) || 1;
+            limit_2 = parseInt(req.query.limit) || 10;
+            registerById = req.params.id;
+            (0, formService_1.GetComplainDataServiceByRegister)(search, page_2, limit_2, registerById, function (complaints, totalCount) {
+                return new HttpResponse_1.HttpResponse(res, "Get data successfully", {
+                    complaints: complaints,
+                    totalCount: totalCount,
+                    currentPage: page_2,
+                    totalPages: Math.ceil(totalCount / limit_2),
+                }, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.GetComplainFromDataByRegister = GetComplainFromDataByRegister;

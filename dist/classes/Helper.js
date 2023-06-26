@@ -82,6 +82,40 @@ var Helper = /** @class */ (function () {
             });
         });
     };
+    Helper.getFormattedDate = function () {
+        var currentDate = new Date();
+        var year = currentDate.getFullYear().toString();
+        var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        var date = currentDate.getDate().toString().padStart(2, '0');
+        return "".concat(date).concat(month).concat(year);
+    };
     return Helper;
 }());
 exports.Helper = Helper;
+// static async sendEmail(emailId: string, callBack: Function) {
+//   let transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: {
+//       type: "OAuth2",
+//       user: Environment.EMAIL,
+//       pass: Environment.PASSWORD_SALT_SECRET,
+//       clientId: Environment.CLIENT_ID,
+//       clientSecret: Environment.CLIENT_SECRET,
+//       refreshToken: Environment.REFRESH_TOKEN,
+//     },
+//   });
+//   let mailOptions = {
+//     from: Environment.EMAIL,
+//     to: emailId,
+//     subject: "easy hrms Project",
+//     text: "Hi from easy hrms Project",
+//   };
+//   transporter.sendMail(mailOptions, function (err, data) {
+//     if (err) {
+//       callBack(false);
+//     } else {
+//       return callBack(true);
+//     }
+//   });
+// }
+// }

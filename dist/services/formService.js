@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateComplainStatusService = exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
+exports.GetComplainDataServiceByRegister = exports.updateComplainStatusService = exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
 var Helper_1 = require("../classes/Helper");
 var formModels_1 = require("../models/formModels");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
@@ -52,6 +52,7 @@ var ComplainFormRegisterService = function (params, callBack) { return __awaiter
                     }).populate("employeeType")];
             case 1:
                 employeeType = _a.sent();
+                console.log("sadfasdfasdfds---------", employeeType[0].employeeType[0].type);
                 if (!(employeeType[0].employeeType[0].type === "service" ||
                     employeeType[0].employeeType[0].type === "admin")) return [3 /*break*/, 3];
                 return [4 /*yield*/, formModels_1.complainFormSchema.create(params)];
@@ -225,3 +226,37 @@ var updateComplainStatusService = function (params, callBack) { return __awaiter
     });
 }); };
 exports.updateComplainStatusService = updateComplainStatusService;
+var GetComplainDataServiceByRegister = function (search, page, limit, registerById, // Add the registerBy ObjectId parameter
+callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, totalCount, totalPages, complaints, error_7;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                query = {};
+                if (search) {
+                    query = { $text: { $search: search } };
+                }
+                // Add the registerBy ObjectId to the query
+                query.registerBy = registerById;
+                return [4 /*yield*/, formModels_1.complainFormSchema.countDocuments(query)];
+            case 1:
+                totalCount = _a.sent();
+                totalPages = Math.ceil(totalCount / limit);
+                return [4 /*yield*/, formModels_1.complainFormSchema
+                        .find(query)
+                        .skip((page - 1) * limit)
+                        .limit(limit)];
+            case 2:
+                complaints = _a.sent();
+                callBack(complaints, totalCount, page, totalPages);
+                return [3 /*break*/, 4];
+            case 3:
+                error_7 = _a.sent();
+                callBack(error_7);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.GetComplainDataServiceByRegister = GetComplainDataServiceByRegister;

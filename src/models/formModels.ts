@@ -3,7 +3,6 @@ import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
 
 export interface Complaint {
   complainId: string;
-  dealerName: string;
   registerBy: Schema.Types.ObjectId;
   customerName: string;
   phoneNumber: string;
@@ -24,10 +23,6 @@ export interface Complaint {
 const schema = new Schema<Complaint>(
   {
     complainId: {
-      type: String,
-      required: true,
-    },
-    dealerName: {
       type: String,
       required: true,
     },
@@ -83,12 +78,12 @@ const schema = new Schema<Complaint>(
     },
     updatedBy: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: IDatabaseSchema.EMPLOYEE,
     },
     assignedTo: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: IDatabaseSchema.EMPLOYEE,
     },
   },

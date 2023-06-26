@@ -30,6 +30,15 @@ export class Helper {
     return token;
   }
 
+  static getFormattedDate() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear().toString();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const date = currentDate.getDate().toString().padStart(2, '0');
+    return `${date}${month}${year}`;
+  }
+}
+
   // static async sendEmail(emailId: string, callBack: Function) {
   //   let transporter = nodemailer.createTransport({
   //     service: "gmail",
@@ -57,4 +66,4 @@ export class Helper {
   //     }
   //   });
   // }
-}
+// }

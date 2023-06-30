@@ -50,7 +50,7 @@ var schema = new mongoose_1.Schema({
     },
     registerBy: {
         type: mongoose_1.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: IDatabaseSchema_1.IDatabaseSchema.EMPLOYEE,
     },
     complainStatus: {

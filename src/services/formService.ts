@@ -14,7 +14,7 @@ export const ComplainFormRegisterService = async (
     const employeeType = await EmployeesSchema.find({
       _id: params.registerBy,
     }).populate("employeeType");
-    console.log("sadfasdfasdfds---------",employeeType[0].employeeType[0].type)
+    console.log("sadfasdfasdfds---------", employeeType[0].employeeType[0].type)
     if (
       employeeType[0].employeeType[0].type === "service" ||
       employeeType[0].employeeType[0].type === "admin"
@@ -85,6 +85,16 @@ export const GetComplainDataService = async (
 
     const complaints = await complainFormSchema
       .find(query)
+      .lean()
+      .populate({
+        path: "registerBy",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+          },
+        ],
+      })
       .skip((page - 1) * limit)
       .limit(limit);
 

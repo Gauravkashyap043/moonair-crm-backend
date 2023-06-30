@@ -3,7 +3,7 @@ import { IDatabaseSchema } from "../interfaces/IDatabaseSchema";
 
 export interface Complaint {
   complainId: string;
-  registerBy: Schema.Types.ObjectId;
+  registerBy?: Schema.Types.ObjectId;
   customerName: string;
   phoneNumber: string;
   altPhoneNumber?: string;
@@ -68,7 +68,7 @@ const schema = new Schema<Complaint>(
     },
     registerBy: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: IDatabaseSchema.EMPLOYEE,
     },
     complainStatus: {

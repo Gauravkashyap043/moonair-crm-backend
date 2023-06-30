@@ -15,7 +15,7 @@ const formRouter = express.Router();
 
 formRouter.post("/complain-form", ComplainFormRegister);
 formRouter.get("/complain-data", GetComplainFromData);
-formRouter.get("/complain-data/:id", GetSingleComplainData);
+formRouter.get("/complain-data/:complainId", GetSingleComplainData);
 formRouter.get("/complain-data-register/:id", GetComplainFromDataByRegister);
 formRouter.put("/complain-form/:complainId", ComplainFormUpdate);
 formRouter.delete("/complain-form/:complainId", ComplainFormDelete);

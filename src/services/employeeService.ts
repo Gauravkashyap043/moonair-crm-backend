@@ -91,16 +91,35 @@ export const addEmployeeTypeService = async (
   }
 };
 
+export const getAllEmployeeTypesService = async () => {
+  try {
+    const employeeTypes = await EmployeeTypeSchema.find({});
+    return employeeTypes;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 export const getAllEmployeeService = async (callBack: Function) => {
   try {
-    const result = await EmployeesSchema.find().populate("employeeType");
+    const result = await EmployeesSchema.find({}, { password: 0 }).populate("employeeType");
     callBack(result)
   } catch (error) {
     callBack(error)
   }
 
 }
+
+export const getEmployeesByTypeService = async (typeId: string, callBack: Function) => {
+  try {
+    const result = await EmployeesSchema.find({ employeeType: typeId }).populate('employeeType', '-password');
+    callBack(result);
+  } catch (error) {
+    callBack(error);
+  }
+};
+
 
 export const getEmployeeByIdService = async (_id: string, callBack: Function) => {
   try {

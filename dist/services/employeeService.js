@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEmployeeByIdService = exports.getAllEmployeeService = exports.addEmployeeTypeService = exports.EmployeeLoginServices = exports.employeeCreateService = void 0;
+exports.getEmployeeByIdService = exports.getEmployeesByTypeService = exports.getAllEmployeeService = exports.getAllEmployeeTypesService = exports.addEmployeeTypeService = exports.EmployeeLoginServices = exports.employeeCreateService = void 0;
 var Helper_1 = require("../classes/Helper");
 var Messages_1 = require("../constants/Messages");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
@@ -142,28 +142,66 @@ var addEmployeeTypeService = function (params, callBack) { return __awaiter(void
     });
 }); };
 exports.addEmployeeTypeService = addEmployeeTypeService;
-var getAllEmployeeService = function (callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_4;
+var getAllEmployeeTypesService = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var employeeTypes, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find().populate("employeeType")];
+                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.find({})];
+            case 1:
+                employeeTypes = _a.sent();
+                return [2 /*return*/, employeeTypes];
+            case 2:
+                error_4 = _a.sent();
+                throw error_4;
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllEmployeeTypesService = getAllEmployeeTypesService;
+var getAllEmployeeService = function (callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({}, { password: 0 }).populate("employeeType")];
             case 1:
                 result = _a.sent();
                 callBack(result);
                 return [3 /*break*/, 3];
             case 2:
-                error_4 = _a.sent();
-                callBack(error_4);
+                error_5 = _a.sent();
+                callBack(error_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.getAllEmployeeService = getAllEmployeeService;
+var getEmployeesByTypeService = function (typeId, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, employeeModel_1.EmployeesSchema.find({ employeeType: typeId }).populate('employeeType', '-password')];
+            case 1:
+                result = _a.sent();
+                callBack(result);
+                return [3 /*break*/, 3];
+            case 2:
+                error_6 = _a.sent();
+                callBack(error_6);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getEmployeesByTypeService = getEmployeesByTypeService;
 var getEmployeeByIdService = function (_id, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_5;
+    var result, error_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -174,8 +212,8 @@ var getEmployeeByIdService = function (_id, callBack) { return __awaiter(void 0,
                 callBack(result);
                 return [3 /*break*/, 3];
             case 2:
-                error_5 = _a.sent();
-                callBack(error_5);
+                error_7 = _a.sent();
+                callBack(error_7);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

@@ -4,7 +4,9 @@ import {
   addEmployeeTypeController,
   employeeCreateController,
   getAllEmployee,
+  getAllEmployeeTypesController,
   getEmployeeById,
+  getEmployeesByType,
 } from "../controllers/employeeController";
 import { RequestValidation } from "../classes/RequestValidation";
 import { requestValidationConfig } from "../config/requestValidationConfig";
@@ -28,7 +30,10 @@ employeeRouter.post(
   addEmployeeTypeController
 );
 
-employeeRouter.get("/get-all-employee",getAllEmployee)
+employeeRouter.get("/employee-types", getAllEmployeeTypesController);
+
+employeeRouter.get("/get-all-employee", getAllEmployee)
+employeeRouter.get('/get-employees-by-type/:typeId', getEmployeesByType);
 
 employeeRouter.get("/get-employee/:_id", getEmployeeById);
 

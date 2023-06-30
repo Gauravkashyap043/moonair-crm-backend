@@ -104,7 +104,7 @@ export const GetComplainFromData = async (req: Request, res: Response) => {
 
 export const GetSingleComplainData = async (req: Request, res: Response) => {
   try {
-    const complainId = req.params.id;
+    const complainId = req.params.complainId;
     GetSingleComplainDataService(complainId, (complaint: any) => {
       return new HttpResponse(
         res,
@@ -127,7 +127,6 @@ export const ComplainFormUpdate = async (req: Request, res: Response) => {
       const complainId = req.params.complainId;
       const updatedParams: Complaint = {
         complainId: req.body.complainId,
-        registerBy: token["0"].fullName,
         phoneNumber: req.body.phoneNumber,
         customerName: req.body.customerName,
         address: req.body.address,

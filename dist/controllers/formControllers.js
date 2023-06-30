@@ -131,7 +131,7 @@ var GetSingleComplainData = function (req, res) { return __awaiter(void 0, void 
     var complainId;
     return __generator(this, function (_a) {
         try {
-            complainId = req.params.id;
+            complainId = req.params.complainId;
             (0, formService_1.GetSingleComplainDataService)(complainId, function (complaint) {
                 return new HttpResponse_1.HttpResponse(res, "Get single complaint successfully", {
                     complaint: complaint,
@@ -158,7 +158,6 @@ var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, 
                     complainId = req.params.complainId;
                     updatedParams_1 = {
                         complainId: req.body.complainId,
-                        registerBy: token["0"].fullName,
                         phoneNumber: req.body.phoneNumber,
                         customerName: req.body.customerName,
                         address: req.body.address,

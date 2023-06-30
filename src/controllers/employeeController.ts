@@ -8,7 +8,9 @@ import {
   addEmployeeTypeService,
   employeeCreateService,
   getAllEmployeeService,
+  getAllEmployeeTypesService,
   getEmployeeByIdService,
+  getEmployeesByTypeService,
 } from "../services/employeeService";
 import {
   EmployeeTypeModel,
@@ -85,6 +87,24 @@ export const addEmployeeTypeController = async (
   }
 };
 
+export const getAllEmployeeTypesController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const employeeTypes = await getAllEmployeeTypesService();
+    return new HttpResponse(
+      res,
+      Messages.EMPLOYEE_TYPES_FETCHED,
+      employeeTypes,
+      HttpStatuses.OK
+    ).sendResponse();
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+
 export const getAllEmployee = async (req: Request, res: Response) => {
   try {
     getAllEmployeeService((result: any) => {
@@ -99,6 +119,21 @@ export const getAllEmployee = async (req: Request, res: Response) => {
     new HttpResponse(res).sendErrorResponse(error);
   }
 }
+
+export const getEmployeesByType = async (req: Request, res: Response) => {
+  try {
+    const typeId = req.params.typeId;
+    getEmployeesByTypeService(typeId, (result: any) => {
+      if (result) {
+        res.json(result);
+      } else {
+        res.status(404).json({ message: 'No employees found for the given type ID' });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 export const getEmployeeById = async (req: Request, res: Response) => {
   try {

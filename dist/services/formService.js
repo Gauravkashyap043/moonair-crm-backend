@@ -133,6 +133,16 @@ var GetComplainDataService = function (search, page, limit, callBack) { return _
                 totalPages = Math.ceil(totalCount / limit);
                 return [4 /*yield*/, formModels_1.complainFormSchema
                         .find(query)
+                        .lean()
+                        .populate({
+                        path: "registerBy",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                            },
+                        ],
+                    })
                         .skip((page - 1) * limit)
                         .limit(limit)];
             case 2:

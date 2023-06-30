@@ -16,4 +16,5 @@ export const Messages = {
   INTERNAL_SERVER_ERROR: "Internal Server Error. Kindly contact admin.",
   COMPLAIN_UPDATED: "Complain updated successfully.",
   FAILED: "Failed",
+  EMPLOYEE_TYPES_FETCHED: 'Employee type fetch successfully.'
 };

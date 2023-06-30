@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEmployeeById = exports.getAllEmployee = exports.addEmployeeTypeController = exports.EmployeeLogin = exports.employeeCreateController = void 0;
+exports.getEmployeeById = exports.getEmployeesByType = exports.getAllEmployee = exports.getAllEmployeeTypesController = exports.addEmployeeTypeController = exports.EmployeeLogin = exports.employeeCreateController = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var Messages_1 = require("../constants/Messages");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
@@ -101,6 +101,25 @@ var addEmployeeTypeController = function (req, res) { return __awaiter(void 0, v
     });
 }); };
 exports.addEmployeeTypeController = addEmployeeTypeController;
+var getAllEmployeeTypesController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var employeeTypes, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, employeeService_1.getAllEmployeeTypesService)()];
+            case 1:
+                employeeTypes = _a.sent();
+                return [2 /*return*/, new HttpResponse_1.HttpResponse(res, Messages_1.Messages.EMPLOYEE_TYPES_FETCHED, employeeTypes, IHttpStatuses_1.HttpStatuses.OK).sendResponse()];
+            case 2:
+                error_1 = _a.sent();
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllEmployeeTypesController = getAllEmployeeTypesController;
 var getAllEmployee = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         try {
@@ -115,6 +134,27 @@ var getAllEmployee = function (req, res) { return __awaiter(void 0, void 0, void
     });
 }); };
 exports.getAllEmployee = getAllEmployee;
+var getEmployeesByType = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var typeId;
+    return __generator(this, function (_a) {
+        try {
+            typeId = req.params.typeId;
+            (0, employeeService_1.getEmployeesByTypeService)(typeId, function (result) {
+                if (result) {
+                    res.json(result);
+                }
+                else {
+                    res.status(404).json({ message: 'No employees found for the given type ID' });
+                }
+            });
+        }
+        catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.getEmployeesByType = getEmployeesByType;
 var getEmployeeById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id;
     return __generator(this, function (_a) {

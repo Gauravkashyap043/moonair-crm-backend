@@ -42,7 +42,7 @@ var schema = new mongoose_1.Schema({
     },
     dopDate: {
         type: Date,
-        required: true,
+        required: false,
     },
     problem: {
         type: String,

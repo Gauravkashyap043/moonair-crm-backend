@@ -134,7 +134,6 @@ export const ComplainFormUpdate = async (req: Request, res: Response) => {
         state: req.body.state,
         country: req.body.country,
         postalCode: req.body.postalCode,
-        dopDate: new Date(),
         problem: req.body.problem,
         complainStatus: req.body.complainStatus,
       };
@@ -199,10 +198,12 @@ export const updateComplainStatusController = async (
 ) => {
   try {
     const token = await verifyToken(req.headers.authorization);
+    console.log("token-------------", token)
     const params = {
-      status: req.body.status,
+      complainStatus: req.body.complainStatus,
       updatedBy: token[0]._id,
       complainId: req.body.complainId,
+      assignedTo: req.body.assignedTo,
     };
     if (token) {
       updateComplainStatusService(params, (result: any) => {

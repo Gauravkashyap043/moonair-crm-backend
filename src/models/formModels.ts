@@ -12,7 +12,7 @@ export interface Complaint {
   state: string;
   country: string;
   postalCode: number;
-  dopDate: Date;
+  dopDate?: Date;
   problem: string;
   complainStatus: string;
   updatedBy?: Schema.Types.ObjectId;
@@ -60,7 +60,7 @@ const schema = new Schema<Complaint>(
     },
     dopDate: {
       type: Date,
-      required: true,
+      required: false,
     },
     problem: {
       type: String,

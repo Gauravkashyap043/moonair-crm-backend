@@ -45,8 +45,10 @@ export const GetSingleComplainDataService = async (
           {
             path: "employeeType",
             model: "employeeType",
+            select: "-password",
           },
         ],
+        select: "-password",
       })
       .populate({
         path: "updatedBy",
@@ -54,18 +56,32 @@ export const GetSingleComplainDataService = async (
           {
             path: "employeeType",
             model: "employeeType",
+            select: "-password",
           },
         ],
+        select: "-password",
+      })
+      .populate({
+        path: "assignedTo",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+            select: "-password",
+          },
+        ],
+        select: "-password",
       });
-
     if (!complaint) {
       throw new Error("Complaint not found");
     }
+
     callBack(complaint);
   } catch (error) {
     callBack(error);
   }
 };
+
 
 export const GetComplainDataService = async (
   search: string,
@@ -94,6 +110,29 @@ export const GetComplainDataService = async (
             model: "employeeType",
           },
         ],
+        select: "-password",
+      })
+      .populate({
+        path: "updatedBy",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+            select: "-password",
+          },
+        ],
+        select: "-password",
+      })
+      .populate({
+        path: "assignedTo",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+            select: "-password",
+          },
+        ],
+        select: "-password",
       })
       .skip((page - 1) * limit)
       .limit(limit);
@@ -130,7 +169,7 @@ export const ComplainFormDeleteService = async (
 };
 
 export const updateComplainStatusService = async (
-  params: { status: string; updatedBy: string; complainId: string },
+  params: { complainStatus: string; updatedBy: string; complainId: string, assignedTo: string },
   callBack: Function
 ) => {
   try {
@@ -150,8 +189,9 @@ export const updateComplainStatusService = async (
         },
         {
           $set: {
-            complainStatus: params.status,
+            complainStatus: params.complainStatus,
             updatedBy: params.updatedBy,
+            assignedTo: params.assignedTo
           },
         }
       );

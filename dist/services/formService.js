@@ -89,8 +89,10 @@ var GetSingleComplainDataService = function (complainId, callBack) { return __aw
                             {
                                 path: "employeeType",
                                 model: "employeeType",
+                                select: "-password",
                             },
                         ],
+                        select: "-password",
                     })
                         .populate({
                         path: "updatedBy",
@@ -98,8 +100,21 @@ var GetSingleComplainDataService = function (complainId, callBack) { return __aw
                             {
                                 path: "employeeType",
                                 model: "employeeType",
+                                select: "-password",
                             },
                         ],
+                        select: "-password",
+                    })
+                        .populate({
+                        path: "assignedTo",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                                select: "-password",
+                            },
+                        ],
+                        select: "-password",
                     })];
             case 1:
                 complaint = _a.sent();
@@ -142,6 +157,29 @@ var GetComplainDataService = function (search, page, limit, callBack) { return _
                                 model: "employeeType",
                             },
                         ],
+                        select: "-password",
+                    })
+                        .populate({
+                        path: "updatedBy",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                                select: "-password",
+                            },
+                        ],
+                        select: "-password",
+                    })
+                        .populate({
+                        path: "assignedTo",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                                select: "-password",
+                            },
+                        ],
+                        select: "-password",
                     })
                         .skip((page - 1) * limit)
                         .limit(limit)];
@@ -218,8 +256,9 @@ var updateComplainStatusService = function (params, callBack) { return __awaiter
                         complainId: params.complainId,
                     }, {
                         $set: {
-                            complainStatus: params.status,
+                            complainStatus: params.complainStatus,
                             updatedBy: params.updatedBy,
+                            assignedTo: params.assignedTo
                         },
                     })];
             case 2:

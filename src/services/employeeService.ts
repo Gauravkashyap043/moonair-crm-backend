@@ -114,7 +114,11 @@ export const getAllEmployeeService = async (callBack: Function) => {
 export const getEmployeesByTypeService = async (typeId: string, callBack: Function) => {
   try {
     const result = await EmployeesSchema.find({ employeeType: typeId }).populate('employeeType', '-password');
-    callBack(result);
+    const filteredResult = result.map((employee: any) => {
+      const { password, ...employeeWithoutPassword } = employee.toObject();
+      return employeeWithoutPassword;
+    });
+    callBack(filteredResult);
   } catch (error) {
     callBack(error);
   }

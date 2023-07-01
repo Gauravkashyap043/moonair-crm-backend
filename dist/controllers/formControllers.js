@@ -165,7 +165,6 @@ var ComplainFormUpdate = function (req, res) { return __awaiter(void 0, void 0, 
                         state: req.body.state,
                         country: req.body.country,
                         postalCode: req.body.postalCode,
-                        dopDate: new Date(),
                         problem: req.body.problem,
                         complainStatus: req.body.complainStatus,
                     };
@@ -236,10 +235,12 @@ var updateComplainStatusController = function (req, res) { return __awaiter(void
                 return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(req.headers.authorization)];
             case 1:
                 token = _a.sent();
+                console.log("token-------------", token);
                 params = {
-                    status: req.body.status,
+                    complainStatus: req.body.complainStatus,
                     updatedBy: token[0]._id,
                     complainId: req.body.complainId,
+                    assignedTo: req.body.assignedTo,
                 };
                 if (token) {
                     (0, formService_1.updateComplainStatusService)(params, function (result) {

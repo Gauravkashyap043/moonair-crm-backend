@@ -9,6 +9,7 @@ import {
   ComplainFormRegisterService,
   ComplainFormUpdateService,
   GetComplainDataService,
+  GetComplainDataServiceByAssignedTo,
   GetComplainDataServiceByRegister,
   GetSingleComplainDataService,
   updateComplainStatusService,
@@ -240,6 +241,37 @@ export const GetComplainFromDataByRegister = async (req: Request, res: Response)
       page,
       limit,
       registerById,
+      (complaints: any[], totalCount: number) => {
+        return new HttpResponse(
+          res,
+          "Get data successfully",
+          {
+            complaints,
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+          HttpStatuses.OK
+        ).sendResponse();
+      }
+    );
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+export const GetComplainFromDataByAssignedTo = async (req: Request, res: Response) => {
+  try {
+    const search = req.query.search?.toString() || "";
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const assignedToId = req.params.id; // Get the assignedTo ObjectId from the route parameter
+
+    GetComplainDataServiceByAssignedTo(
+      search,
+      page,
+      limit,
+      assignedToId,
       (complaints: any[], totalCount: number) => {
         return new HttpResponse(
           res,

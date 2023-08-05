@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetComplainFromDataByRegister = exports.updateComplainStatusController = exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
+exports.GetComplainFromDataByAssignedTo = exports.GetComplainFromDataByRegister = exports.updateComplainStatusController = exports.ComplainFormDelete = exports.ComplainFormUpdate = exports.GetSingleComplainData = exports.GetComplainFromData = exports.ComplainFormRegister = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var jwtConfig_1 = require("../config/jwtConfig");
@@ -289,3 +289,28 @@ var GetComplainFromDataByRegister = function (req, res) { return __awaiter(void 
     });
 }); };
 exports.GetComplainFromDataByRegister = GetComplainFromDataByRegister;
+var GetComplainFromDataByAssignedTo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var search, page_3, limit_3, assignedToId;
+    var _a;
+    return __generator(this, function (_b) {
+        try {
+            search = ((_a = req.query.search) === null || _a === void 0 ? void 0 : _a.toString()) || "";
+            page_3 = parseInt(req.query.page) || 1;
+            limit_3 = parseInt(req.query.limit) || 10;
+            assignedToId = req.params.id;
+            (0, formService_1.GetComplainDataServiceByAssignedTo)(search, page_3, limit_3, assignedToId, function (complaints, totalCount) {
+                return new HttpResponse_1.HttpResponse(res, "Get data successfully", {
+                    complaints: complaints,
+                    totalCount: totalCount,
+                    currentPage: page_3,
+                    totalPages: Math.ceil(totalCount / limit_3),
+                }, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+            });
+        }
+        catch (error) {
+            new HttpResponse_1.HttpResponse(res).sendErrorResponse(error);
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.GetComplainFromDataByAssignedTo = GetComplainFromDataByAssignedTo;

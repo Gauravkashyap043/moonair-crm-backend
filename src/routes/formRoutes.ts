@@ -6,6 +6,7 @@ import {
   ComplainFormRegister,
   ComplainFormUpdate,
   GetComplainFromData,
+  GetComplainFromDataByAssignedTo,
   GetComplainFromDataByRegister,
   GetSingleComplainData,
   updateComplainStatusController,
@@ -17,6 +18,7 @@ formRouter.post("/complain-form", ComplainFormRegister);
 formRouter.get("/complain-data", GetComplainFromData);
 formRouter.get("/complain-data/:complainId", GetSingleComplainData);
 formRouter.get("/complain-data-register/:id", GetComplainFromDataByRegister);
+formRouter.get("/complain-data-assignedTo/:id", GetComplainFromDataByAssignedTo);
 formRouter.put("/complain-form/:complainId", ComplainFormUpdate);
 formRouter.delete("/complain-form/:complainId", ComplainFormDelete);
 formRouter.put("/update-status", updateComplainStatusController);

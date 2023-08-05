@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetComplainDataServiceByRegister = exports.updateComplainStatusService = exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
+exports.GetComplainDataServiceByAssignedTo = exports.GetComplainDataServiceByRegister = exports.updateComplainStatusService = exports.ComplainFormDeleteService = exports.ComplainFormUpdateService = exports.GetComplainDataService = exports.GetSingleComplainDataService = exports.ComplainFormRegisterService = void 0;
 var Helper_1 = require("../classes/Helper");
 var formModels_1 = require("../models/formModels");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
@@ -294,6 +294,38 @@ callBack) { return __awaiter(void 0, void 0, void 0, function () {
                 totalPages = Math.ceil(totalCount / limit);
                 return [4 /*yield*/, formModels_1.complainFormSchema
                         .find(query)
+                        .populate({
+                        path: "registerBy",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                            },
+                        ],
+                        select: "-password",
+                    })
+                        .populate({
+                        path: "updatedBy",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                                select: "-password",
+                            },
+                        ],
+                        select: "-password",
+                    })
+                        .populate({
+                        path: "assignedTo",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                                select: "-password",
+                            },
+                        ],
+                        select: "-password",
+                    })
                         .skip((page - 1) * limit)
                         .limit(limit)];
             case 2:
@@ -309,3 +341,48 @@ callBack) { return __awaiter(void 0, void 0, void 0, function () {
     });
 }); };
 exports.GetComplainDataServiceByRegister = GetComplainDataServiceByRegister;
+var GetComplainDataServiceByAssignedTo = function (search, page, limit, assignedToId, // Add the assignedTo ObjectId parameter
+callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, totalCount, totalPages, complaints, error_8;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                query = {};
+                if (search) {
+                    query = { $text: { $search: search } };
+                }
+                // Add the assignedTo ObjectId to the query
+                query.assignedTo = assignedToId;
+                return [4 /*yield*/, formModels_1.complainFormSchema.countDocuments(query)];
+            case 1:
+                totalCount = _a.sent();
+                totalPages = Math.ceil(totalCount / limit);
+                return [4 /*yield*/, formModels_1.complainFormSchema
+                        .find(query)
+                        .populate({
+                        path: "assignedTo",
+                        populate: [
+                            {
+                                path: "employeeType",
+                                model: "employeeType",
+                                select: "-password",
+                            },
+                        ],
+                        select: "-password",
+                    })
+                        .skip((page - 1) * limit)
+                        .limit(limit)];
+            case 2:
+                complaints = _a.sent();
+                callBack(complaints, totalCount, page, totalPages);
+                return [3 /*break*/, 4];
+            case 3:
+                error_8 = _a.sent();
+                callBack(error_8);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.GetComplainDataServiceByAssignedTo = GetComplainDataServiceByAssignedTo;

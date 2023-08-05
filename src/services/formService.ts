@@ -227,6 +227,38 @@ export const GetComplainDataServiceByRegister = async (
 
     const complaints = await complainFormSchema
       .find(query)
+      .populate({
+        path: "registerBy",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+          },
+        ],
+        select: "-password",
+      })
+      .populate({
+        path: "updatedBy",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+            select: "-password",
+          },
+        ],
+        select: "-password",
+      })
+      .populate({
+        path: "assignedTo",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+            select: "-password",
+          },
+        ],
+        select: "-password",
+      })
       .skip((page - 1) * limit)
       .limit(limit);
 
@@ -235,3 +267,46 @@ export const GetComplainDataServiceByRegister = async (
     callBack(error);
   }
 };
+
+export const GetComplainDataServiceByAssignedTo = async (
+  search: string,
+  page: number,
+  limit: number,
+  assignedToId: string, // Add the assignedTo ObjectId parameter
+  callBack: Function
+) => {
+  try {
+    let query: any = {}; // Initialize an empty query
+
+    if (search) {
+      query = { $text: { $search: search } };
+    }
+
+    // Add the assignedTo ObjectId to the query
+    query.assignedTo = assignedToId;
+
+    const totalCount = await complainFormSchema.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const complaints = await complainFormSchema
+      .find(query)
+      .populate({
+        path: "assignedTo",
+        populate: [
+          {
+            path: "employeeType",
+            model: "employeeType",
+            select: "-password",
+          },
+        ],
+        select: "-password",
+      })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    callBack(complaints, totalCount, page, totalPages);
+  } catch (error) {
+    callBack(error);
+  }
+};
+

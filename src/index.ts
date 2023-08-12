@@ -18,6 +18,6 @@ app.use(router);
 
 app.listen(process.env.BACK_PORT, () => {
   console.log(
-    `server running : https://${process.env.BACK_HOST}:${process.env.BACK_PORT}`
+    `server running : http://localhost:${process.env.BACK_PORT}`
   );
 });

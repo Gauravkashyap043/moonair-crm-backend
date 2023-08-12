@@ -19,5 +19,5 @@ app.use(routes_1.default);
 //   res.send("What's up my");
 // });
 app.listen(process.env.BACK_PORT, function () {
-    console.log("server running : https://".concat(process.env.BACK_HOST, ":").concat(process.env.BACK_PORT));
+    console.log("server running : http://localhost:".concat(process.env.BACK_PORT));
 });

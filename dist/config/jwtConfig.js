@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = void 0;
+exports.isTokenRevoked = exports.addToBlacklist = exports.verifyToken = void 0;
 var jsonwebtoken_1 = require("jsonwebtoken");
 var process_1 = __importDefault(require("process"));
 var verifyToken = function (token) { return __awaiter(void 0, void 0, void 0, function () {
@@ -63,3 +63,14 @@ var verifyToken = function (token) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 exports.verifyToken = verifyToken;
+var revokedTokens = [];
+// Maintain a list of revoked tokens (you can use a database for this in production)
+var addToBlacklist = function (token) {
+    revokedTokens.push(token);
+};
+exports.addToBlacklist = addToBlacklist;
+// Function to check if the token is in the blacklist
+var isTokenRevoked = function (token) {
+    return revokedTokens.includes(token);
+};
+exports.isTokenRevoked = isTokenRevoked;

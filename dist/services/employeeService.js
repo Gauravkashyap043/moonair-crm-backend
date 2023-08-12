@@ -47,8 +47,9 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEmployeeByIdService = exports.getEmployeesByTypeService = exports.getAllEmployeeService = exports.getAllEmployeeTypesService = exports.addEmployeeTypeService = exports.EmployeeLoginServices = exports.employeeCreateService = void 0;
+exports.getEmployeeByIdService = exports.getEmployeesByTypeService = exports.getAllEmployeeService = exports.getAllEmployeeTypesService = exports.addEmployeeTypeService = exports.UserLogoutServices = exports.EmployeeLoginServices = exports.employeeCreateService = void 0;
 var Helper_1 = require("../classes/Helper");
+var jwtConfig_1 = require("../config/jwtConfig");
 var Messages_1 = require("../constants/Messages");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
 var employeeModel_1 = require("../models/employeeModel");
@@ -127,22 +128,26 @@ var EmployeeLoginServices = function (params, callBack) { return __awaiter(void 
     });
 }); };
 exports.EmployeeLoginServices = EmployeeLoginServices;
-var addEmployeeTypeService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_3;
+var UserLogoutServices = function (accessToken, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var decodedToken, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.find(params)];
-            case 1:
-                result = _a.sent();
-                if (result && result.length) {
-                    return [2 /*return*/, Helper_1.Helper.throwError(Messages_1.Messages.EMPLOYEE_EXIST, true, IHttpStatuses_1.HttpStatuses.CONFLICT)];
+                if (!accessToken) {
+                    return [2 /*return*/, Helper_1.Helper.throwError("Access token not provided.", null, IHttpStatuses_1.HttpStatuses.BAD_REQUEST)];
                 }
-                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.create(params)];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, (0, jwtConfig_1.verifyToken)(accessToken)];
             case 2:
-                _a.sent();
-                callBack(true);
+                decodedToken = _a.sent();
+                if (!decodedToken) {
+                    return [2 /*return*/, Helper_1.Helper.throwError("Invalid access token.", null, IHttpStatuses_1.HttpStatuses.UNAUTHORIZED)];
+                }
+                // Add the token to the blacklist (revoke it)
+                (0, jwtConfig_1.addToBlacklist)(accessToken);
+                callBack({ success: true });
                 return [3 /*break*/, 4];
             case 3:
                 error_3 = _a.sent();
@@ -152,9 +157,35 @@ var addEmployeeTypeService = function (params, callBack) { return __awaiter(void
         }
     });
 }); };
+exports.UserLogoutServices = UserLogoutServices;
+var addEmployeeTypeService = function (params, callBack) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.find(params)];
+            case 1:
+                result = _a.sent();
+                if (result && result.length) {
+                    return [2 /*return*/, Helper_1.Helper.throwError(Messages_1.Messages.EMPLOYEE_TYPE_EXIST, true, IHttpStatuses_1.HttpStatuses.CONFLICT)];
+                }
+                return [4 /*yield*/, employeeTypeModel_1.EmployeeTypeSchema.create(params)];
+            case 2:
+                _a.sent();
+                callBack(true);
+                return [3 /*break*/, 4];
+            case 3:
+                error_4 = _a.sent();
+                callBack(error_4);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
 exports.addEmployeeTypeService = addEmployeeTypeService;
 var getAllEmployeeTypesService = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var employeeTypes, error_4;
+    var employeeTypes, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -164,15 +195,15 @@ var getAllEmployeeTypesService = function () { return __awaiter(void 0, void 0, 
                 employeeTypes = _a.sent();
                 return [2 /*return*/, employeeTypes];
             case 2:
-                error_4 = _a.sent();
-                throw error_4;
+                error_5 = _a.sent();
+                throw error_5;
             case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.getAllEmployeeTypesService = getAllEmployeeTypesService;
 var getAllEmployeeService = function (callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_5;
+    var result, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -183,8 +214,8 @@ var getAllEmployeeService = function (callBack) { return __awaiter(void 0, void 
                 callBack(result);
                 return [3 /*break*/, 3];
             case 2:
-                error_5 = _a.sent();
-                callBack(error_5);
+                error_6 = _a.sent();
+                callBack(error_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -192,7 +223,7 @@ var getAllEmployeeService = function (callBack) { return __awaiter(void 0, void 
 }); };
 exports.getAllEmployeeService = getAllEmployeeService;
 var getEmployeesByTypeService = function (typeId, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, filteredResult, error_6;
+    var result, filteredResult, error_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -207,8 +238,8 @@ var getEmployeesByTypeService = function (typeId, callBack) { return __awaiter(v
                 callBack(filteredResult);
                 return [3 /*break*/, 3];
             case 2:
-                error_6 = _a.sent();
-                callBack(error_6);
+                error_7 = _a.sent();
+                callBack(error_7);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -216,7 +247,7 @@ var getEmployeesByTypeService = function (typeId, callBack) { return __awaiter(v
 }); };
 exports.getEmployeesByTypeService = getEmployeesByTypeService;
 var getEmployeeByIdService = function (_id, callBack) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_7;
+    var result, error_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -227,8 +258,8 @@ var getEmployeeByIdService = function (_id, callBack) { return __awaiter(void 0,
                 callBack(result);
                 return [3 /*break*/, 3];
             case 2:
-                error_7 = _a.sent();
-                callBack(error_7);
+                error_8 = _a.sent();
+                callBack(error_8);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

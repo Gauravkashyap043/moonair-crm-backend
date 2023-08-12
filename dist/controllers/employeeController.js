@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEmployeeById = exports.getEmployeesByType = exports.getAllEmployee = exports.getAllEmployeeTypesController = exports.addEmployeeTypeController = exports.EmployeeLogin = exports.employeeCreateController = void 0;
+exports.getEmployeeById = exports.getEmployeesByType = exports.getAllEmployee = exports.getAllEmployeeTypesController = exports.addEmployeeTypeController = exports.userLogout = exports.EmployeeLogin = exports.employeeCreateController = void 0;
 var HttpResponse_1 = require("../classes/HttpResponse");
 var Messages_1 = require("../constants/Messages");
 var IHttpStatuses_1 = require("../interfaces/IHttpStatuses");
@@ -80,6 +80,31 @@ var EmployeeLogin = function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); };
 exports.EmployeeLogin = EmployeeLogin;
+var userLogout = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var accessToken, error_1;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                accessToken = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", "");
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, (0, employeeService_1.UserLogoutServices)(accessToken, function (result) {
+                        new HttpResponse_1.HttpResponse(res, "Logged out successfully.", result, IHttpStatuses_1.HttpStatuses.OK).sendResponse();
+                    })];
+            case 2:
+                _b.sent();
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _b.sent();
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_1);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.userLogout = userLogout;
 var addEmployeeTypeController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var params;
     return __generator(this, function (_a) {
@@ -102,7 +127,7 @@ var addEmployeeTypeController = function (req, res) { return __awaiter(void 0, v
 }); };
 exports.addEmployeeTypeController = addEmployeeTypeController;
 var getAllEmployeeTypesController = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var employeeTypes, error_1;
+    var employeeTypes, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -112,8 +137,8 @@ var getAllEmployeeTypesController = function (req, res) { return __awaiter(void 
                 employeeTypes = _a.sent();
                 return [2 /*return*/, new HttpResponse_1.HttpResponse(res, Messages_1.Messages.EMPLOYEE_TYPES_FETCHED, employeeTypes, IHttpStatuses_1.HttpStatuses.OK).sendResponse()];
             case 2:
-                error_1 = _a.sent();
-                new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_1);
+                error_2 = _a.sent();
+                new HttpResponse_1.HttpResponse(res).sendErrorResponse(error_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

@@ -10,4 +10,5 @@ var HttpStatuses;
     HttpStatuses[HttpStatuses["CONFLICT"] = 409] = "CONFLICT";
     HttpStatuses[HttpStatuses["MOVED"] = 309] = "MOVED";
     HttpStatuses[HttpStatuses["NOT_FOUND"] = 404] = "NOT_FOUND";
+    HttpStatuses[HttpStatuses["UNAUTHORIZED"] = 403] = "UNAUTHORIZED";
 })(HttpStatuses || (exports.HttpStatuses = HttpStatuses = {}));

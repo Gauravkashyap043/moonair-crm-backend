@@ -6,4 +6,5 @@ export enum HttpStatuses {
   CONFLICT = 409,
   MOVED = 309,
   NOT_FOUND = 404,
+  UNAUTHORIZED = 403
 }

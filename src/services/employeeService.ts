@@ -1,4 +1,5 @@
 import { Helper } from "../classes/Helper";
+import { addToBlacklist, verifyToken } from "../config/jwtConfig";
 import { Messages } from "../constants/Messages";
 import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { EmployeesModel, EmployeesSchema } from "../models/employeeModel";
@@ -71,6 +72,27 @@ export const EmployeeLoginServices = async (
   }
 };
 
+export const UserLogoutServices = async (accessToken: string | undefined, callBack: Function) => {
+  if (!accessToken) {
+    return Helper.throwError("Access token not provided.", null, HttpStatuses.BAD_REQUEST);
+  }
+
+  try {
+    const decodedToken: any = await verifyToken(accessToken);
+
+    if (!decodedToken) {
+      return Helper.throwError("Invalid access token.", null, HttpStatuses.UNAUTHORIZED);
+    }
+
+    // Add the token to the blacklist (revoke it)
+    addToBlacklist(accessToken);
+
+    callBack({ success: true });
+  } catch (error) {
+    callBack(error);
+  }
+};
+
 export const addEmployeeTypeService = async (
   params: EmployeeTypeModel,
   callBack: Function
@@ -79,7 +101,7 @@ export const addEmployeeTypeService = async (
     const result = await EmployeeTypeSchema.find(params);
     if (result && result.length) {
       return Helper.throwError(
-        Messages.EMPLOYEE_EXIST,
+        Messages.EMPLOYEE_TYPE_EXIST,
         true,
         HttpStatuses.CONFLICT
       );

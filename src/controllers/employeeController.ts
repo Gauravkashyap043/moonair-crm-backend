@@ -5,6 +5,7 @@ import { HttpStatuses } from "../interfaces/IHttpStatuses";
 import { EmployeesModel } from "../models/employeeModel";
 import {
   EmployeeLoginServices,
+  UserLogoutServices,
   addEmployeeTypeService,
   employeeCreateService,
   getAllEmployeeService,
@@ -55,6 +56,18 @@ export const EmployeeLogin = async (req: Request, res: Response) => {
         ).sendResponse();
       }
       new HttpResponse(res).sendErrorResponse(result);
+    });
+  } catch (error) {
+    new HttpResponse(res).sendErrorResponse(error);
+  }
+};
+
+export const userLogout = async (req: Request, res: Response) => {
+  const accessToken = req.header("Authorization")?.replace("Bearer ", "");
+
+  try {
+    await UserLogoutServices(accessToken, (result: any) => {
+      new HttpResponse(res, "Logged out successfully.", result, HttpStatuses.OK).sendResponse();
     });
   } catch (error) {
     new HttpResponse(res).sendErrorResponse(error);
